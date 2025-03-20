@@ -10,11 +10,9 @@ public class Main {
     public static int idLastEpicAdd;
     public static int idLastSubTaskAdd;
 
-        public static void main(String[] args)  {
-
+    public static void main(String[] args) {
         testAddAllTasks();
         testRemoveTask();
-
         testAddSubTaskToEpic();
         testRemoveSubTaskFromEpic();
         testUpdateTasks();
@@ -127,26 +125,32 @@ public class Main {
         //Печатаем еще раз, чтобы убедиться, что метод работает.
         System.out.println("Печать после отвязки");
         printAllTask();
+        // Привязываем вновь и теперь отвязываем сразу все
+        epicTask.addSubTaskToEpic(subTask);
+        printAllTask();
+        epicTask.removeAllSubTasksFromEpic(taskManager.getAllSubTask());
+        printAllTask();
     }
 
-    public static void printAllTask(){
+    public static void printAllTask() {
         System.out.println("-".repeat(100));
         System.out.println("Печатаем все задачи");
         System.out.println("Все Task");
-        for (Task taskToPrint :taskManager.getAllTask()){
+        for (Task taskToPrint : taskManager.getAllTask()) {
             System.out.println(taskToPrint);
         }
         System.out.println("Все EpicTask");
-        for (EpicTask taskToPrint :taskManager.getAllEpic()){
+        for (EpicTask taskToPrint : taskManager.getAllEpic()) {
             System.out.println(taskToPrint);
         }
         System.out.println("Все SubTask");
-        for (SubTask taskToPrint :taskManager.getAllSubTask()){
+        for (SubTask taskToPrint : taskManager.getAllSubTask()) {
             System.out.println(taskToPrint);
         }
         System.out.println("-".repeat(100));
     }
-    public static void addTasksToTest(){
+
+    public static void addTasksToTest() {
         // Создаем и добавляем Task
         Task task = new Task("Задача Task", "Описание задачи Task");
         idLastTaskAdd = taskManager.addNewTask(task);
@@ -168,13 +172,15 @@ public class Main {
         idLastSubTaskAdd = taskManager.addNewSubTask(subTask);
         taskManager.getSubTask(idLastSubTaskAdd);
     }
-    public static void testAddAllTasks(){
+
+    public static void testAddAllTasks() {
         System.out.println("Проверка на добавление Задач");
         addTasksToTest();
         addTasksToTest();
         printAllTask();
     }
-    public static void testRemoveTask(){
+
+    public static void testRemoveTask() {
         addTasksToTest();
         System.out.println("Проверка на удаление задач");
         // idTas
@@ -189,7 +195,8 @@ public class Main {
         taskManager.deleteEpicTasks();
         printAllTask();
     }
-    public static void testAddSubTaskToEpic(){
+
+    public static void testAddSubTaskToEpic() {
         System.out.println("Проверка на добавление subTask в Epic");
 
         // Создаем и добавляем EpicTask

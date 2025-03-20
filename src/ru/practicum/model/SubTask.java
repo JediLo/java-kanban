@@ -7,8 +7,8 @@ public class SubTask extends Task {
 
     private int EpicTaskID;
 
-    public SubTask(String name , String description) {
-        super(name,  description);
+    public SubTask(String name, String description) {
+        super(name, description);
 
     }
 
@@ -16,7 +16,7 @@ public class SubTask extends Task {
     public String toString() {
         return "SubTask{" + super.toString() +
                 "EpicTaskID=" + EpicTaskID +
-                "} "  ;
+                "} ";
     }
 
     public void setEpicTaskID(int epicTaskID) {

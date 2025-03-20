@@ -3,14 +3,14 @@ package ru.practicum.model;
 import java.util.Objects;
 
 public class Task {
-    public static final int  DEFAULT_ID_TASK = 0;
+    public static final int DEFAULT_ID_TASK = 0;
     private final String name;
     private final String description;
     private int taskID;
     private TaskProgress taskProgress;
 
 
-    public Task(String name, String  description) {
+    public Task(String name, String description) {
         this.name = name;
         this.description = description;
 
@@ -23,18 +23,19 @@ public class Task {
     public void setTaskProgress(TaskProgress taskProgress) {
         this.taskProgress = taskProgress;
     }
- /*В equals и hashCode оставил только проверку по ID потому как остальные поля могут отличаться
-  в переданном объекте в методы: updateTask, updateEpic, updateSubtask*/
+
+    /*В equals и hashCode оставил только проверку по ID потому как остальные поля могут отличаться
+     в переданном объекте в методы: updateTask, updateEpic, updateSubtask*/
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Task task = (Task) o;
-        return taskID == task.taskID ;
+        return taskID == task.taskID;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash( taskID);
+        return Objects.hash(taskID);
     }
 
     public int getTaskID() {
