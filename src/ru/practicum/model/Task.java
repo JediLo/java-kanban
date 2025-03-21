@@ -3,9 +3,8 @@ package ru.practicum.model;
 import java.util.Objects;
 
 public class Task {
-    public static final int DEFAULT_ID_TASK = 0;
-    private final String name;
-    private final String description;
+    private String name;
+    private String description;
     private int taskID;
     private TaskProgress taskProgress;
 
@@ -54,6 +53,22 @@ public class Task {
 
     public TaskProgress getTaskProgress() {
         return taskProgress;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }
 
