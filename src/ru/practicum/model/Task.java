@@ -3,10 +3,10 @@ package ru.practicum.model;
 import java.util.Objects;
 
 public class Task {
-    private String name;
-    private String description;
-    private int taskID;
-    private TaskProgress taskProgress;
+    protected String name;
+    protected String description;
+    protected int taskID;
+    protected TaskProgress taskProgress;
 
 
     public Task(String name, String description) {

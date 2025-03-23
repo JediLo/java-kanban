@@ -15,6 +15,21 @@ public class Main {
         testRemoveTask();
         testCheckAndReplaceTaskProgress();
         testUpdateTasks();
+        testReturnTasks();
+
+    }
+
+    private static void testReturnTasks() {
+        System.out.println("Проверяем методы возращения");
+        System.out.println(taskManager.getTask(idLastTaskAdd));
+        System.out.println(taskManager.getSubTask(idLastSubTaskAdd));
+        System.out.println(taskManager.getEpicTask(idLastEpicAdd));
+        System.out.println(taskManager.getSubTasksFromEpic(taskManager.getEpicTask(idLastEpicAdd)));
+        System.out.println("Получаем сразу списки всех Задач");
+        System.out.println(taskManager.getAllEpic());
+        System.out.println(taskManager.getAllTask());
+        System.out.println(taskManager.getAllSubTask());
+
     }
 
     private static void testUpdateTasks() {
