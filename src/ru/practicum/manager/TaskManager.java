@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 public class TaskManager {
-    static final int DEFAULT_ID_TASK = 0;
+    private static final int DEFAULT_ID_TASK = 0;
     private int countTasks = DEFAULT_ID_TASK;
     private final Map<Integer, Task> tasks = new HashMap<>();
     private final Map<Integer, Epic> epics = new HashMap<>();
@@ -137,21 +137,24 @@ public class TaskManager {
     }
 
     public List<Task> getAllTask() {
-        return tasks.values().stream().toList();
+        return new ArrayList<>(tasks.values());
     }
 
     public List<Epic> getAllEpic() {
-        return epics.values().stream().toList();
+        return new ArrayList<>(epics.values());
     }
 
     public List<SubTask> getAllSubTask() {
-        return subTasks.values().stream().toList();
+        return new ArrayList<>(subTasks.values());
     }
-    public List<SubTask> getSubTasksFromEpic(Epic epic){
+    public List<SubTask> getSubTasksFromEpic(int id){
         List<SubTask> subTasksFromEpic= new ArrayList<>();
-        for (int idSubTask : epic.getSubTasksID()){
-            subTasksFromEpic.add(subTasks.get(idSubTask));
-    }
+        Epic epic = epics.get(id);
+        if(epic != null){
+            for (int idSubTask : epic.getSubTasksID()) {
+                subTasksFromEpic.add(subTasks.get(idSubTask));
+            }
+        }
         return subTasksFromEpic;
     }
 

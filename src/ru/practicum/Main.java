@@ -1,3 +1,5 @@
+package ru.practicum;
+
 import ru.practicum.manager.TaskManager;
 import ru.practicum.model.Epic;
 import ru.practicum.model.SubTask;
@@ -24,7 +26,7 @@ public class Main {
         System.out.println(taskManager.getTask(idLastTaskAdd));
         System.out.println(taskManager.getSubTask(idLastSubTaskAdd));
         System.out.println(taskManager.getEpicTask(idLastEpicAdd));
-        System.out.println(taskManager.getSubTasksFromEpic(taskManager.getEpicTask(idLastEpicAdd)));
+        System.out.println(taskManager.getSubTasksFromEpic(idLastEpicAdd));
         System.out.println("Получаем сразу списки всех Задач");
         System.out.println(taskManager.getAllEpic());
         System.out.println(taskManager.getAllTask());
