@@ -14,6 +14,12 @@ public class Task {
         this.description = description;
 
     }
+    public Task(Task task){
+        this.name = task.getName();
+        this.description = task.getDescription();
+        this.taskID = task.taskID;
+        this.taskProgress = task.taskProgress;
+    }
 
     public void setTaskID(int taskID) {
         this.taskID = taskID;
@@ -23,8 +29,6 @@ public class Task {
         this.taskProgress = taskProgress;
     }
 
-    /*В equals и hashCode оставил только проверку по ID потому как остальные поля могут отличаться
-     в переданном объекте в методы: updateTask, updateEpic, updateSubtask*/
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;

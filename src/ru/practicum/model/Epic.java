@@ -5,17 +5,19 @@ import java.util.List;
 
 
 public class Epic extends Task {
-    public List<Integer> getSubTasksID() {
-        return subTasksID;
-    }
-
-    private final List<Integer> subTasksID = new ArrayList<>();
+    private List<Integer> subTasksID = new ArrayList<>();
 
     public Epic(String name, String description) {
         super(name, description);
 
     }
-
+    public Epic(Epic epic){
+        super(epic);
+        this.subTasksID = epic.getSubTasksID();
+    }
+    public List<Integer> getSubTasksID() {
+        return subTasksID;
+    }
     public void addSubTask(SubTask subTask) {
         this.subTasksID.add(subTask.getTaskID());
 
@@ -36,4 +38,5 @@ public class Epic extends Task {
                 "subTasksID=" + subTasksID +
                 "} ";
     }
+
 }

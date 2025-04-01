@@ -1,13 +1,15 @@
 package ru.practicum;
 
-import ru.practicum.manager.TaskManager;
+
+import ru.practicum.manager.General.Managers;
+import ru.practicum.manager.General.TaskManager;
 import ru.practicum.model.Epic;
 import ru.practicum.model.SubTask;
 import ru.practicum.model.Task;
 import ru.practicum.model.TaskProgress;
 
 public class Main {
-    public static TaskManager taskManager = new TaskManager();
+    static TaskManager taskManager = Managers.getDefault();
     public static int idLastTaskAdd;
     public static int idLastEpicAdd;
     public static int idLastSubTaskAdd;
@@ -31,6 +33,7 @@ public class Main {
         System.out.println(taskManager.getAllEpic());
         System.out.println(taskManager.getAllTask());
         System.out.println(taskManager.getAllSubTask());
+
 
     }
 
@@ -110,17 +113,25 @@ public class Main {
     public static void printAllTask() {
         System.out.println("-".repeat(100));
         System.out.println("Печатаем все задачи");
-        System.out.println("Все Task");
-        for (Task taskToPrint : taskManager.getAllTask()) {
-            System.out.println(taskToPrint);
+        for (Task task : taskManager.getAllTask()) {
+            System.out.println(task);
         }
-        System.out.println("Все Epic");
-        for (Epic taskToPrint : taskManager.getAllEpic()) {
-            System.out.println(taskToPrint);
+        System.out.println("Эпики:");
+        for (Task epic : taskManager.getAllEpic()) {
+            System.out.println(epic);
+
+            for (Task task : taskManager.getSubTasksFromEpic(epic.getTaskID())) {
+                System.out.println("--> " + task);
+            }
         }
-        System.out.println("Все SubTask");
-        for (SubTask taskToPrint : taskManager.getAllSubTask()) {
-            System.out.println(taskToPrint);
+        System.out.println("Подзадачи:");
+        for (Task subtask : taskManager.getAllSubTask()) {
+            System.out.println(subtask);
+        }
+
+        System.out.println("История:");
+        for (Task task : taskManager.getHistory()) {
+            System.out.println(task);
         }
         System.out.println("-".repeat(100));
     }
