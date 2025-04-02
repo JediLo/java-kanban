@@ -1,4 +1,4 @@
-package ru.practicum.manager.General;
+package ru.practicum.manager.general;
 
 import ru.practicum.model.Epic;
 import ru.practicum.model.SubTask;

@@ -1,8 +1,8 @@
-package ru.practicum.manager.General;
+package ru.practicum.manager.general;
 
-import ru.practicum.manager.History.HistoryManager;
-import ru.practicum.manager.History.InMemoryHistoryManager;
-import ru.practicum.manager.Memory.InMemoryTaskManager;
+import ru.practicum.manager.history.HistoryManager;
+import ru.practicum.manager.history.InMemoryHistoryManager;
+import ru.practicum.manager.memory.InMemoryTaskManager;
 
 public class Managers {
 

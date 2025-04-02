@@ -1,8 +1,8 @@
-package ru.practicum.manager.Memory;
+package ru.practicum.manager.memory;
 
-import ru.practicum.manager.General.Managers;
-import ru.practicum.manager.General.TaskManager;
-import ru.practicum.manager.History.HistoryManager;
+import ru.practicum.manager.general.Managers;
+import ru.practicum.manager.general.TaskManager;
+import ru.practicum.manager.history.HistoryManager;
 import ru.practicum.model.Epic;
 import ru.practicum.model.SubTask;
 import ru.practicum.model.Task;

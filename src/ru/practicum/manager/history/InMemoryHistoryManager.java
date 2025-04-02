@@ -1,4 +1,4 @@
-package ru.practicum.manager.History;
+package ru.practicum.manager.history;
 
 import ru.practicum.model.Epic;
 import ru.practicum.model.SubTask;
@@ -11,28 +11,26 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void add(Task task) {
-        if (task == null){
+        if (task == null) {
             return;
         }
         Task taskToHistory;
-        if(task instanceof SubTask subTask){
+        if (task instanceof SubTask subTask) {
             taskToHistory = new SubTask(subTask);
         } else if (task instanceof Epic epic) {
-             taskToHistory = new Epic(epic);
+            taskToHistory = new Epic(epic);
         } else {
             taskToHistory = new Task(task);
         }
 
-        if (historyViews.size() < 10) {
-            historyViews.add(taskToHistory);
-        } else {
+        if (historyViews.size() >= 10) {
             historyViews.removeFirst();
-            historyViews.add(taskToHistory);
         }
+        historyViews.add(taskToHistory);
     }
 
     @Override
     public LinkedList<Task> getHistory() {
-        return historyViews;
+        return new LinkedList<>(historyViews);
     }
 }
