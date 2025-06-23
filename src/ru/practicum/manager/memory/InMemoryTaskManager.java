@@ -121,7 +121,12 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void deleteTask(int id) {
+        Task task = tasks.get(id);
+        if (task == null){
+         return;
+        }
         tasks.remove(id);
+        history.remove(id);
     }
 
     @Override
@@ -132,8 +137,11 @@ public class InMemoryTaskManager implements TaskManager {
         }
         for (int idSubTask : epic.getSubTasksID()) {
             subTasks.remove(idSubTask);
+            history.remove(idSubTask);
         }
+
         epics.remove(id);
+        history.remove(id);
     }
 
     @Override
@@ -148,22 +156,34 @@ public class InMemoryTaskManager implements TaskManager {
             checkAndReplaceTaskProgress(epicToReplace);
         }
         subTasks.remove(id);
+        history.remove(id);
     }
 
     @Override
     public void deleteTasks() {
+        for( Task task :tasks.values()){
+            history.remove(task.getTaskID());
+        }
         tasks.clear();
     }
-
     @Override
     public void deleteEpicTasks() {
+        for( Epic epic :epics.values()){
+            history.remove(epic.getTaskID());
+        }
         epics.clear();
+        for( SubTask subTask :subTasks.values()){
+            history.remove(subTask.getTaskID());
+        }
         subTasks.clear();
 
     }
 
     @Override
     public void deleteSubTasks() {
+        for( SubTask subTask :subTasks.values()){
+            history.remove(subTask.getTaskID());
+        }
         subTasks.clear();
         for (Epic epic : epics.values()) {
             epic.removeAllSubTasks();
