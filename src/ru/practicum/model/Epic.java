@@ -11,15 +11,18 @@ public class Epic extends Task {
         super(name, description);
 
     }
-    public Epic(Epic epic){
+
+    public Epic(Epic epic) {
         super(epic);
         this.subTasksID = epic.getSubTasksID();
     }
+
     public List<Integer> getSubTasksID() {
         return subTasksID;
     }
+
     public void addSubTask(SubTask subTask) {
-        if (subTask == null){
+        if (subTask == null) {
             return;
         }
         this.subTasksID.add(subTask.getTaskID());
@@ -27,7 +30,7 @@ public class Epic extends Task {
     }
 
     public void removeSubTask(SubTask subTask) {
-        if (subTask == null){
+        if (subTask == null) {
             return;
         }
         this.subTasksID.remove((Integer) subTask.getTaskID());

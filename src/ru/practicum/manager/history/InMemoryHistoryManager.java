@@ -24,7 +24,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         } else {
             taskToHistory = new Task(task);
         }
-        historyViews.add(taskToHistory.getTaskID(),taskToHistory);
+        historyViews.add(taskToHistory.getTaskID(), taskToHistory);
     }
 
 
@@ -78,7 +78,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         }
 
         private void removeNode(int id, Node<T> oldNode) {
-            if (oldNode == null){
+            if (oldNode == null) {
                 return;
             }
             if (oldNode.prev != null) { // если у задачи есть связь с предыдущей
@@ -96,9 +96,6 @@ public class InMemoryHistoryManager implements HistoryManager {
             size--; // Уменьшаем размер списка
         }
     }
-
-
-
 
 
 }
