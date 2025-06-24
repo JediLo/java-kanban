@@ -27,7 +27,6 @@ public class InMemoryHistoryManager implements HistoryManager {
         historyViews.add(taskToHistory.getTaskID(), taskToHistory);
     }
 
-
     @Override
     public ArrayList<Task> getHistory() {
         return historyViews.getTasks();
