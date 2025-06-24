@@ -8,13 +8,15 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ManagersTest {
     @Test
-    void shouldNotNullTaskManager(){
+    void shouldNotNullTaskManager() {
         assertNotNull(Managers.getDefault());
     }
+
     @Test
-    void shouldNotNullHistoryManager(){
+    void shouldNotNullHistoryManager() {
         assertNotNull(Managers.getDefaultHistory());
     }
+
     @Test
     void shouldReturnNewTaskManager() {
         TaskManager taskManagerFirst = Managers.getDefault();
