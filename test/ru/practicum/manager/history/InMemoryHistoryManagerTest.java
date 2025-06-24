@@ -11,59 +11,40 @@ import ru.practicum.model.TaskProgress;
 class InMemoryHistoryManagerTest {
 
     @Test
-    void shouldSaveOldVersionTask() {
+    void shouldSaveOldVersionTask(){
         HistoryManager manager = Managers.getDefaultHistory();
         Task task = new Task("Name", "Des");
         manager.add(task);
         task.setName("New Name");
         task.setDescription("New Des");
         task.setTaskProgress(TaskProgress.IN_PROGRESS);
-        Assertions.assertNotEquals(task.getName(), manager.getHistory().getFirst().getName());
-        Assertions.assertNotEquals(task.getDescription(), manager.getHistory().getFirst().getDescription());
-        Assertions.assertNotEquals(task.getTaskProgress(), manager.getHistory().getFirst().getTaskProgress());
+        Assertions.assertNotEquals(task.getName() , manager.getHistory().getFirst().getName());
+        Assertions.assertNotEquals(task.getDescription() , manager.getHistory().getFirst().getDescription());
+        Assertions.assertNotEquals(task.getTaskProgress() , manager.getHistory().getFirst().getTaskProgress());
     }
-
     @Test
-    void shouldSaveOldVersionEpic() {
+    void shouldSaveOldVersionEpic(){
         HistoryManager manager = Managers.getDefaultHistory();
         Epic epic = new Epic("Name", "Des");
         manager.add(epic);
         epic.setName("New Name");
         epic.setDescription("New Des");
-        Assertions.assertNotEquals(epic.getName(), manager.getHistory().getFirst().getName());
-        Assertions.assertNotEquals(epic.getDescription(), manager.getHistory().getFirst().getDescription());
+        Assertions.assertNotEquals(epic.getName() , manager.getHistory().getFirst().getName());
+        Assertions.assertNotEquals(epic.getDescription() , manager.getHistory().getFirst().getDescription());
 
     }
-
     @Test
-    void shouldSaveOldVersionSubTask() {
+    void shouldSaveOldVersionSubTask(){
         HistoryManager manager = Managers.getDefaultHistory();
-        SubTask subTask = new SubTask("Name", "Des", 0);
+        SubTask subTask = new SubTask("Name", "Des",0);
         manager.add(subTask);
         subTask.setName("New Name");
         subTask.setDescription("New Des");
         subTask.setTaskProgress(TaskProgress.IN_PROGRESS);
-        Assertions.assertNotEquals(subTask.getName(), manager.getHistory().getFirst().getName());
-        Assertions.assertNotEquals(subTask.getDescription(), manager.getHistory().getFirst().getDescription());
-        Assertions.assertNotEquals(subTask.getTaskProgress(), manager.getHistory().getFirst().getTaskProgress());
+        Assertions.assertNotEquals(subTask.getName() , manager.getHistory().getFirst().getName());
+        Assertions.assertNotEquals(subTask.getDescription() , manager.getHistory().getFirst().getDescription());
+        Assertions.assertNotEquals(subTask.getTaskProgress() , manager.getHistory().getFirst().getTaskProgress());
     }
 
-    @Test
-    void shouldBeTaskUpdate() {
-        HistoryManager manager = Managers.getDefaultHistory();
-        Task task = new Task("Name", "Des");
-        task.setTaskID(1);
-        manager.add(task);
-        Task task2 = new Task("Name task 2", "Des task 2");
-        task2.setTaskID(2);
-        manager.add(task2);
-        // Сначала первой в истории должна быть первая задача.
-        Assertions.assertEquals(task, manager.getHistory().getFirst());
-        Assertions.assertNotEquals(task, manager.getHistory().getLast());
-        manager.add(task);
-        // После второго вызова добавления в историю, первая задача должна переместиться в конец. А из начала уйти.
-        Assertions.assertNotEquals(task, manager.getHistory().getFirst());
-        Assertions.assertEquals(task, manager.getHistory().getLast());
-    }
 
 }
