@@ -1,13 +1,14 @@
 package ru.practicum.model;
 
 public class SubTask extends Task {
-    private  int epicTaskID;
+    private int epicTaskID;
 
     public SubTask(String name, String description, int epicTaskID) {
         super(name, description);
         this.epicTaskID = epicTaskID;
     }
-    public SubTask(SubTask subTask){
+
+    public SubTask(SubTask subTask) {
         super(subTask);
         this.epicTaskID = subTask.getEpicTaskID();
     }

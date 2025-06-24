@@ -180,6 +180,4 @@ public class Main {
         taskManager.deleteEpicTasks();
         printAllTask();
     }
-
-
 }
