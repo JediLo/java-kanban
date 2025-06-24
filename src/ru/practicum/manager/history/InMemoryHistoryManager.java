@@ -87,9 +87,8 @@ public class InMemoryHistoryManager implements HistoryManager {
                 first = oldNode.next; // если задача была первой, делаем первой следующую задачу
             }
             if (oldNode.next != null) { // если у задачи есть следующая задача
-                oldNode.next.prev = oldNode.prev;
-            }  // Привязываем к следующей задаче предыдущую
-            else {
+                oldNode.next.prev = oldNode.prev; // Привязываем к следующей задаче предыдущую
+            } else {
                 last = oldNode.prev; // делаем последнюю задачу предыдущей
             }
             nodeMap.remove(id); // Удаляем и нашего Мар старую задачу
