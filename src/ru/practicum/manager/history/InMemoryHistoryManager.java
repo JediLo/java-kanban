@@ -78,6 +78,9 @@ public class InMemoryHistoryManager implements HistoryManager {
         }
 
         private void removeNode(int id, Node<T> oldNode) {
+            if (oldNode == null){
+                return;
+            }
             if (oldNode.prev != null) { // если у задачи есть связь с предыдущей
                 oldNode.prev.next = oldNode.next; // Привязываем предыдущую к следующей
             } else {

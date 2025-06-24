@@ -15,6 +15,9 @@ public class Task {
 
     }
     public Task(Task task){
+        if (task == null) {
+            return;
+        }
         this.name = task.getName();
         this.description = task.getDescription();
         this.taskID = task.taskID;
