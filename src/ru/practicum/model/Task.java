@@ -8,16 +8,13 @@ public class Task {
     protected int taskID;
     protected TaskProgress taskProgress;
 
+
     public Task(String name, String description) {
         this.name = name;
         this.description = description;
 
     }
-
-    public Task(Task task) {
-        if (task == null) {
-            return;
-        }
+    public Task(Task task){
         this.name = task.getName();
         this.description = task.getDescription();
         this.taskID = task.taskID;

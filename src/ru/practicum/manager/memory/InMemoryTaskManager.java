@@ -25,7 +25,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Task getTask(int id) {
         Task task = tasks.get(id);
-        if (task == null) {
+        if (task == null){
             return null;
         }
         history.add(task);
@@ -35,7 +35,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Epic getEpicTask(int id) {
         Epic epic = epics.get(id);
-        if (epic == null) {
+        if (epic == null){
             return null;
         }
         history.add(epic);
@@ -45,7 +45,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public SubTask getSubTask(int id) {
         SubTask subTask = subTasks.get(id);
-        if (subTask == null) {
+        if (subTask == null){
             return null;
         }
         history.add(subTask);
@@ -54,9 +54,6 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public int addNewTask(Task task) {
-        if (task == null) {
-            return -1;
-        }
         countTasks++;
         task.setTaskID(countTasks);
         task.setTaskProgress(TaskProgress.NEW);
@@ -66,9 +63,6 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public int addNewEpicTask(Epic task) {
-        if (task == null) {
-            return -1;
-        }
         countTasks++;
         task.setTaskID(countTasks);
         task.setTaskProgress(TaskProgress.NEW);
@@ -77,19 +71,16 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public int addNewSubTask(SubTask subTaskask) {
-        if (subTaskask == null) {
-            return -1;
-        }
-        Epic epic = epics.get(subTaskask.getEpicTaskID());
+    public int addNewSubTask(SubTask task) {
+        Epic epic = epics.get(task.getEpicTaskID());
         if (epic == null) {
             return -1;
         } else {
             countTasks++;
-            subTaskask.setTaskID(countTasks);
-            subTaskask.setTaskProgress(TaskProgress.NEW);
-            subTasks.put(countTasks, subTaskask);
-            epic.addSubTask(subTaskask);
+            task.setTaskID(countTasks);
+            task.setTaskProgress(TaskProgress.NEW);
+            subTasks.put(countTasks, task);
+            epic.addSubTask(task);
             checkAndReplaceTaskProgress(epic);
             return countTasks;
         }
@@ -98,9 +89,6 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void updateTask(Task newTask) {
-        if (newTask == null) {
-            return;
-        }
         Task task = tasks.get(newTask.getTaskID());
         if (task != null) {
             tasks.put(newTask.getTaskID(), newTask);
@@ -109,9 +97,6 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void updateEpic(Epic newEpic) {
-        if (newEpic == null) {
-            return;
-        }
         Epic epic = epics.get(newEpic.getTaskID());
         if (epic != null) {
             epic.setName(newEpic.getName());
@@ -121,9 +106,6 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void updateSubtask(SubTask newSubTask) {
-        if (newSubTask == null) {
-            return;
-        }
         Epic epic = epics.get(newSubTask.getEpicTaskID());
         if (epic == null) {
             return;
@@ -139,27 +121,19 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void deleteTask(int id) {
-        Task task = tasks.get(id);
-        if (task == null) {
-            return;
-        }
         tasks.remove(id);
-        history.remove(id);
     }
 
     @Override
     public void deleteEpicTask(int id) {
         Epic epic = epics.get(id);
-        if (epic == null) {
+        if (epic == null){
             return;
         }
         for (int idSubTask : epic.getSubTasksID()) {
             subTasks.remove(idSubTask);
-            history.remove(idSubTask);
         }
-
         epics.remove(id);
-        history.remove(id);
     }
 
     @Override
@@ -174,35 +148,22 @@ public class InMemoryTaskManager implements TaskManager {
             checkAndReplaceTaskProgress(epicToReplace);
         }
         subTasks.remove(id);
-        history.remove(id);
     }
 
     @Override
     public void deleteTasks() {
-        for (Task task : tasks.values()) {
-            history.remove(task.getTaskID());
-        }
         tasks.clear();
     }
 
     @Override
     public void deleteEpicTasks() {
-        for (Epic epic : epics.values()) {
-            history.remove(epic.getTaskID());
-        }
         epics.clear();
-        for (SubTask subTask : subTasks.values()) {
-            history.remove(subTask.getTaskID());
-        }
         subTasks.clear();
 
     }
 
     @Override
     public void deleteSubTasks() {
-        for (SubTask subTask : subTasks.values()) {
-            history.remove(subTask.getTaskID());
-        }
         subTasks.clear();
         for (Epic epic : epics.values()) {
             epic.removeAllSubTasks();
@@ -224,12 +185,11 @@ public class InMemoryTaskManager implements TaskManager {
     public List<SubTask> getAllSubTask() {
         return new ArrayList<>(subTasks.values());
     }
-
     @Override
-    public List<SubTask> getSubTasksFromEpic(int id) {
-        List<SubTask> subTasksFromEpic = new ArrayList<>();
+    public List<SubTask> getSubTasksFromEpic(int id){
+        List<SubTask> subTasksFromEpic= new ArrayList<>();
         Epic epic = epics.get(id);
-        if (epic != null) {
+        if(epic != null){
             for (int idSubTask : epic.getSubTasksID()) {
                 subTasksFromEpic.add(subTasks.get(idSubTask));
             }
@@ -243,9 +203,6 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     private void checkAndReplaceTaskProgress(Epic epic) {
-        if (epic == null) {
-            return;
-        }
         List<Integer> allSubTasksFromEpic = epic.getSubTasksID();
         if (allSubTasksFromEpic.isEmpty()) {
             epic.setTaskProgress(TaskProgress.NEW);

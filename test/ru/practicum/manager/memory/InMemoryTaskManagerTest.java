@@ -12,6 +12,7 @@ class InMemoryTaskManagerTest {
     static InMemoryTaskManager manager = new InMemoryTaskManager();
 
 
+
     @Test
     void shouldAddTaskWithNewStatusAndCorrectId() {
 
@@ -21,7 +22,6 @@ class InMemoryTaskManagerTest {
                 "Статус не был обновлен на NEW в Task");
         assertEquals(idTask, manager.getTask(idTask).getTaskID(), "Неверный ID в Task");
     }
-
     @Test
     void shouldAddEpicWithNewStatusAndCorrectId() {
 
@@ -31,7 +31,6 @@ class InMemoryTaskManagerTest {
                 "Статус не был обновлен на NEW в Epic");
         assertEquals(idEpic, manager.getEpicTask(idEpic).getTaskID(), "Неверный ID в Epic");
     }
-
     @Test
     void shouldAddSubTaskWithNewStatusAndCorrectId() {
 
@@ -88,7 +87,7 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    void shouldTaskProgressUpdateWhenUpdateSubTaskProgressForOneSubTask() {
+    void shouldTaskProgressUpdateWhenUpdateSubTaskProgressForOneSubTask(){
         Epic epic = new Epic("Name Epic", "Description Epic");
         int idEpic = manager.addNewEpicTask(epic);
         SubTask updateSubTask = createSubTask(idEpic);
@@ -101,9 +100,8 @@ class InMemoryTaskManagerTest {
         manager.updateSubtask(updateSubTask);
         assertEquals(TaskProgress.DONE, epic.getTaskProgress(), "Статус не изменился на DONE");
     }
-
     @Test
-    void shouldTaskProgressUpdateWhenUpdateSubTaskProgressForMoreSubTask() {
+    void shouldTaskProgressUpdateWhenUpdateSubTaskProgressForMoreSubTask(){
         Epic epic = new Epic("Name Epic", "Description Epic");
         int idEpic = manager.addNewEpicTask(epic);
 
@@ -122,8 +120,7 @@ class InMemoryTaskManagerTest {
         manager.updateSubtask(subTaskLast);
         assertEquals(TaskProgress.DONE, epic.getTaskProgress(), "Статус не изменился на DONE");
     }
-
-    private SubTask createSubTask(int idEpic) {
+    private SubTask createSubTask(int idEpic){
         SubTask subTask = new SubTask("Name SubTask", "Description SubTask", idEpic);
         int idSubTask = manager.addNewSubTask(subTask);
         SubTask updateSubTask = new SubTask("Name New SubTask", "Description New SubTask", idEpic);
@@ -131,144 +128,4 @@ class InMemoryTaskManagerTest {
         updateSubTask.setEpicTaskID(idEpic);
         return updateSubTask;
     }
-
-    @Test
-    void shouldBeRemoveFromHistoryWhenRemoveTask() {
-        manager = new InMemoryTaskManager();
-        Task task1 = new Task("Name Task 1", "Des Task 1");
-        task1.setTaskID(1);
-        manager.addNewTask(task1);
-        manager.getTask(1);
-        Task task2 = new Task("Name Task 2", "Des Task 2");
-        task2.setTaskID(2);
-        manager.addNewTask(task2);
-        manager.getTask(2);
-        //Длина Истории должна быть 2. Т.к. у нас есть 2 задачи и обе были вызваны методом get
-        int sizeHistoryBeforeRemove = 2;
-        assertEquals(sizeHistoryBeforeRemove, manager.getHistory().size());
-        manager.deleteTask(1);
-        // Длина истории должна уменьшится вместе с удалением задачи
-        int sizeHistoryAfterRemove = 1;
-        assertEquals(sizeHistoryAfterRemove, manager.getHistory().size());
-
-    }
-
-    @Test
-    void shouldBeRemoveFromHistoryWhenRemoveEpic() {
-        manager = new InMemoryTaskManager();
-        Epic epic1 = new Epic("Name Epic 1", "Des Epic 1");
-        epic1.setTaskID(1);
-        manager.addNewEpicTask(epic1);
-        manager.getEpicTask(1);
-        Epic epic2 = new Epic("Name Epic 2", "Des Epic 2");
-        epic2.setTaskID(2);
-        manager.addNewEpicTask(epic2);
-        manager.getEpicTask(2);
-        //Длина Истории должна быть 2. Т.к. у нас есть 2 эпик и обе были вызваны методом get
-        int sizeHistoryBeforeRemove = 2;
-        assertEquals(sizeHistoryBeforeRemove, manager.getHistory().size());
-        manager.deleteEpicTask(1);
-        // Длина истории должна уменьшится вместе с удалением эпика
-        int sizeHistoryAfterRemove = 1;
-        assertEquals(sizeHistoryAfterRemove, manager.getHistory().size());
-    }
-
-    @Test
-    void shouldBeRemoveFromHistoryWhenRemoveSubTask() {
-        manager = new InMemoryTaskManager();
-        Epic epic1 = new Epic("Name Epic 1", "Des Epic 1");
-        epic1.setTaskID(1);
-        manager.addNewEpicTask(epic1);
-        SubTask subTask1 = new SubTask("Name SubTask", "Des Subtask", epic1.getTaskID());
-        SubTask subTask2 = new SubTask("Name SubTask 2", "Des Subtask 2", epic1.getTaskID());
-        subTask1.setTaskID(2);
-        subTask2.setTaskID(3);
-        manager.addNewSubTask(subTask1);
-        manager.addNewSubTask(subTask2);
-        manager.getSubTask(subTask1.getTaskID());
-        manager.getSubTask(subTask2.getTaskID());
-        // Длина Истории должна быть 2. Т.к. у нас есть 3(1 эпик и 2 подзадачи) задачи и две
-        //подзадачи были вызваны методом get
-        int sizeHistoryBeforeRemove = 2;
-        assertEquals(sizeHistoryBeforeRemove, manager.getHistory().size());
-        manager.deleteSubtask(2);
-        // Длина истории должна уменьшится вместе с удалением подзадачи
-        int sizeHistoryAfterRemove = 1;
-        assertEquals(sizeHistoryAfterRemove, manager.getHistory().size());
-    }
-
-    @Test
-    void shouldBeRemoveFromHistoryWhenRemoveTasks() {
-        manager = new InMemoryTaskManager();
-        Task task1 = new Task("Name Task 1", "Des Task 1");
-        task1.setTaskID(1);
-        manager.addNewTask(task1);
-        manager.getTask(1);
-        Task task2 = new Task("Name Task 2", "Des Task 2");
-        task2.setTaskID(2);
-        manager.addNewTask(task2);
-        manager.getTask(2);
-        //Длина Истории должна быть 2. Т.к. у нас есть 2 задачи и обе были вызваны методом get
-        int sizeHistoryBeforeRemove = 2;
-        assertEquals(sizeHistoryBeforeRemove, manager.getHistory().size());
-        manager.deleteTasks();
-        // Длина истории должна уменьшится вместе с удалением всех задач
-        int sizeHistoryAfterRemove = 0;
-        assertEquals(sizeHistoryAfterRemove, manager.getHistory().size());
-
-    }
-
-    @Test
-    void shouldBeRemoveFromHistoryWhenRemoveEpics() {
-        manager = new InMemoryTaskManager();
-        Epic epic1 = new Epic("Name Epic 1", "Des Epic 1");
-        epic1.setTaskID(1);
-        manager.addNewEpicTask(epic1);
-        manager.getEpicTask(epic1.getTaskID());
-        Epic epic2 = new Epic("Name Epic 2", "Des Epic 2");
-        epic2.setTaskID(2);
-        manager.addNewEpicTask(epic2);
-        manager.getEpicTask(epic2.getTaskID());
-        SubTask subTask1 = new SubTask("Name SubTask", "Des Subtask", epic1.getTaskID());
-        SubTask subTask2 = new SubTask("Name SubTask 2", "Des Subtask 2", epic1.getTaskID());
-        subTask1.setTaskID(3);
-        subTask2.setTaskID(4);
-        manager.addNewSubTask(subTask1);
-        manager.addNewSubTask(subTask2);
-        manager.getSubTask(subTask1.getTaskID());
-        manager.getSubTask(subTask2.getTaskID());
-        //Длина Истории должна быть 4. Т.к. у нас есть 2 задачи и 2 подзадачи все они были вызваны методом get
-        int sizeHistoryBeforeRemove = 4;
-        assertEquals(sizeHistoryBeforeRemove, manager.getHistory().size());
-        manager.deleteEpicTasks();
-        // Длина истории должна уменьшится вместе с удалением всех эпиков
-        int sizeHistoryAfterRemove = 0;
-        assertEquals(sizeHistoryAfterRemove, manager.getHistory().size());
-    }
-
-    @Test
-    void shouldBeRemoveFromHistoryWhenRemoveSubTasks() {
-        manager = new InMemoryTaskManager();
-        Epic epic1 = new Epic("Name Epic 1", "Des Epic 1");
-        epic1.setTaskID(1);
-        manager.addNewEpicTask(epic1);
-        manager.getEpicTask(epic1.getTaskID());
-        SubTask subTask1 = new SubTask("Name SubTask", "Des Subtask", epic1.getTaskID());
-        SubTask subTask2 = new SubTask("Name SubTask 2", "Des Subtask 2", epic1.getTaskID());
-        subTask1.setTaskID(2);
-        subTask2.setTaskID(3);
-        manager.addNewSubTask(subTask1);
-        manager.addNewSubTask(subTask2);
-        manager.getSubTask(subTask1.getTaskID());
-        manager.getSubTask(subTask2.getTaskID());
-        //Длина Истории должна быть 3. Т.к. у нас есть 3(1 эпик и 2 подзадачи) задачи и все были вызваны методом get
-        int sizeHistoryBeforeRemove = 3;
-        assertEquals(sizeHistoryBeforeRemove, manager.getHistory().size());
-        manager.deleteSubTasks();
-        // Длина истории должна уменьшится вместе с удалением всех подзадач
-        int sizeHistoryAfterRemove = 1;
-        assertEquals(sizeHistoryAfterRemove, manager.getHistory().size());
-    }
-
 }
-
