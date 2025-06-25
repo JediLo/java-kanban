@@ -38,10 +38,9 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     private static class TasksLinkedList<T> {
-        int size = 0;
         Node<T> first;
         Node<T> last;
-        HashMap<Integer, Node<T>> nodeMap = new HashMap<>();
+        final HashMap<Integer, Node<T>> nodeMap = new HashMap<>();
 
         void add(int id, T task) {
             Node<T> oldNode = nodeMap.get(id);
@@ -56,7 +55,6 @@ public class InMemoryHistoryManager implements HistoryManager {
             }
             last = newNode; // Делаем новую задачу последней
             nodeMap.put(id, newNode); // Добавляем в наш Мар новую задачу
-            size++; // Увеличиваем размер списка
         }
 
         public void remove(int id) {
@@ -91,7 +89,6 @@ public class InMemoryHistoryManager implements HistoryManager {
                 last = oldNode.prev; // делаем последнюю задачу предыдущей
             }
             nodeMap.remove(id); // Удаляем и нашего Мар старую задачу
-            size--; // Уменьшаем размер списка
         }
     }
 

@@ -1,6 +1,8 @@
 package ru.practicum.manager.history;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.practicum.manager.general.Managers;
 import ru.practicum.model.Epic;
@@ -9,10 +11,16 @@ import ru.practicum.model.Task;
 import ru.practicum.model.TaskProgress;
 
 class InMemoryHistoryManagerTest {
+    static HistoryManager manager;
+
+    @BeforeEach
+    void setup() {
+        manager = Managers.getDefaultHistory();
+    }
 
     @Test
     void shouldSaveOldVersionTask() {
-        HistoryManager manager = Managers.getDefaultHistory();
+
         Task task = new Task("Name", "Des");
         manager.add(task);
         task.setName("New Name");
@@ -25,7 +33,7 @@ class InMemoryHistoryManagerTest {
 
     @Test
     void shouldSaveOldVersionEpic() {
-        HistoryManager manager = Managers.getDefaultHistory();
+
         Epic epic = new Epic("Name", "Des");
         manager.add(epic);
         epic.setName("New Name");
@@ -37,7 +45,7 @@ class InMemoryHistoryManagerTest {
 
     @Test
     void shouldSaveOldVersionSubTask() {
-        HistoryManager manager = Managers.getDefaultHistory();
+
         SubTask subTask = new SubTask("Name", "Des", 0);
         manager.add(subTask);
         subTask.setName("New Name");
@@ -50,7 +58,6 @@ class InMemoryHistoryManagerTest {
 
     @Test
     void shouldBeTaskUpdate() {
-        HistoryManager manager = Managers.getDefaultHistory();
         Task task = new Task("Name", "Des");
         task.setTaskID(1);
         manager.add(task);

@@ -1,5 +1,6 @@
 package ru.practicum.manager.memory;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.practicum.model.Epic;
 import ru.practicum.model.SubTask;
@@ -9,8 +10,12 @@ import ru.practicum.model.TaskProgress;
 import static org.junit.jupiter.api.Assertions.*;
 
 class InMemoryTaskManagerTest {
-    static InMemoryTaskManager manager = new InMemoryTaskManager();
+    static InMemoryTaskManager manager;
 
+    @BeforeEach
+    void setup() {
+        manager = new InMemoryTaskManager();
+    }
 
     @Test
     void shouldAddTaskWithNewStatusAndCorrectId() {
@@ -134,7 +139,6 @@ class InMemoryTaskManagerTest {
 
     @Test
     void shouldBeRemoveFromHistoryWhenRemoveTask() {
-        manager = new InMemoryTaskManager();
         Task task1 = new Task("Name Task 1", "Des Task 1");
         task1.setTaskID(1);
         manager.addNewTask(task1);
@@ -155,7 +159,6 @@ class InMemoryTaskManagerTest {
 
     @Test
     void shouldBeRemoveFromHistoryWhenRemoveEpic() {
-        manager = new InMemoryTaskManager();
         Epic epic1 = new Epic("Name Epic 1", "Des Epic 1");
         epic1.setTaskID(1);
         manager.addNewEpicTask(epic1);
@@ -175,7 +178,6 @@ class InMemoryTaskManagerTest {
 
     @Test
     void shouldBeRemoveFromHistoryWhenRemoveSubTask() {
-        manager = new InMemoryTaskManager();
         Epic epic1 = new Epic("Name Epic 1", "Des Epic 1");
         epic1.setTaskID(1);
         manager.addNewEpicTask(epic1);
@@ -199,7 +201,6 @@ class InMemoryTaskManagerTest {
 
     @Test
     void shouldBeRemoveFromHistoryWhenRemoveTasks() {
-        manager = new InMemoryTaskManager();
         Task task1 = new Task("Name Task 1", "Des Task 1");
         task1.setTaskID(1);
         manager.addNewTask(task1);
@@ -220,7 +221,6 @@ class InMemoryTaskManagerTest {
 
     @Test
     void shouldBeRemoveFromHistoryWhenRemoveEpics() {
-        manager = new InMemoryTaskManager();
         Epic epic1 = new Epic("Name Epic 1", "Des Epic 1");
         epic1.setTaskID(1);
         manager.addNewEpicTask(epic1);
@@ -248,7 +248,6 @@ class InMemoryTaskManagerTest {
 
     @Test
     void shouldBeRemoveFromHistoryWhenRemoveSubTasks() {
-        manager = new InMemoryTaskManager();
         Epic epic1 = new Epic("Name Epic 1", "Des Epic 1");
         epic1.setTaskID(1);
         manager.addNewEpicTask(epic1);
