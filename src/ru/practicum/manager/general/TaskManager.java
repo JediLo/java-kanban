@@ -1,4 +1,4 @@
-package ru.practicum.manager.General;
+package ru.practicum.manager.general;
 
 import ru.practicum.model.Epic;
 import ru.practicum.model.SubTask;
@@ -44,5 +44,6 @@ public interface TaskManager {
     List<SubTask> getAllSubTask();
 
     List<SubTask> getSubTasksFromEpic(int id);
+
     List<Task> getHistory();
 }

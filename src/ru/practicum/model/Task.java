@@ -8,13 +8,16 @@ public class Task {
     protected int taskID;
     protected TaskProgress taskProgress;
 
-
     public Task(String name, String description) {
         this.name = name;
         this.description = description;
 
     }
-    public Task(Task task){
+
+    public Task(Task task) {
+        if (task == null) {
+            return;
+        }
         this.name = task.getName();
         this.description = task.getDescription();
         this.taskID = task.taskID;
@@ -74,6 +77,7 @@ public class Task {
     public void setDescription(String description) {
         this.description = description;
     }
+
 }
 
 
