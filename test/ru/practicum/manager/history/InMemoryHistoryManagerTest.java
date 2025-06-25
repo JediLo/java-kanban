@@ -11,7 +11,7 @@ import ru.practicum.model.Task;
 import ru.practicum.model.TaskProgress;
 
 class InMemoryHistoryManagerTest {
-    static HistoryManager manager;
+    private HistoryManager manager;
 
     @BeforeEach
     void setup() {
@@ -20,7 +20,6 @@ class InMemoryHistoryManagerTest {
 
     @Test
     void shouldSaveOldVersionTask() {
-
         Task task = new Task("Name", "Des");
         manager.add(task);
         task.setName("New Name");
@@ -33,7 +32,6 @@ class InMemoryHistoryManagerTest {
 
     @Test
     void shouldSaveOldVersionEpic() {
-
         Epic epic = new Epic("Name", "Des");
         manager.add(epic);
         epic.setName("New Name");
@@ -45,7 +43,6 @@ class InMemoryHistoryManagerTest {
 
     @Test
     void shouldSaveOldVersionSubTask() {
-
         SubTask subTask = new SubTask("Name", "Des", 0);
         manager.add(subTask);
         subTask.setName("New Name");

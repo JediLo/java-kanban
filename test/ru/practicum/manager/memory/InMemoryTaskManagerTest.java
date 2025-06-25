@@ -10,7 +10,7 @@ import ru.practicum.model.TaskProgress;
 import static org.junit.jupiter.api.Assertions.*;
 
 class InMemoryTaskManagerTest {
-    static InMemoryTaskManager manager;
+    private InMemoryTaskManager manager;
 
     @BeforeEach
     void setup() {
