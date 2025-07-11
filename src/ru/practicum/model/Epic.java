@@ -17,6 +17,10 @@ public class Epic extends Task {
         this.subTasksID = epic.getSubTasksID();
     }
 
+    public Epic(int id, TaskType taskType, String name, TaskProgress taskProgress, String description) {
+        super(id, taskType, name, taskProgress, description);
+    }
+
     public List<Integer> getSubTasksID() {
         return subTasksID;
     }

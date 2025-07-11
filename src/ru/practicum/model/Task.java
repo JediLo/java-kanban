@@ -7,11 +7,20 @@ public class Task {
     protected String description;
     protected int taskID;
     protected TaskProgress taskProgress;
+    protected TaskType taskType;
 
     public Task(String name, String description) {
         this.name = name;
         this.description = description;
 
+    }
+
+    public Task(int id, TaskType taskType, String name, TaskProgress taskProgress, String description) {
+        this.taskID = id;
+        this.taskType = taskType;
+        this.name = name;
+        this.taskProgress = taskProgress;
+        this.description = description;
     }
 
     public Task(Task task) {
@@ -22,6 +31,7 @@ public class Task {
         this.description = task.getDescription();
         this.taskID = task.taskID;
         this.taskProgress = task.taskProgress;
+        this.taskType = task.taskType;
     }
 
     public void setTaskID(int taskID) {
@@ -55,6 +65,7 @@ public class Task {
                 ", description='" + description + '\'' +
                 ", taskID=" + taskID +
                 ", taskProgress=" + taskProgress +
+                ", taskType=" + taskType +
                 '}';
     }
 
@@ -78,6 +89,13 @@ public class Task {
         this.description = description;
     }
 
+    public TaskType getType() {
+        return taskType;
+    }
+
+    public void setTaskType(TaskType taskType) {
+        this.taskType = taskType;
+    }
 }
 
 

@@ -1,5 +1,6 @@
 package ru.practicum.manager.general;
 
+import ru.practicum.exceptons.ManagerSaveException;
 import ru.practicum.model.Epic;
 import ru.practicum.model.SubTask;
 import ru.practicum.model.Task;
@@ -7,9 +8,9 @@ import ru.practicum.model.Task;
 import java.util.List;
 
 public interface TaskManager {
-    Task getTask(int id);
+    Task getTask(int id) throws ManagerSaveException;
 
-    Epic getEpicTask(int id);
+    Epic getEpicTask(int id) throws ManagerSaveException;
 
     SubTask getSubTask(int id);
 
@@ -46,4 +47,6 @@ public interface TaskManager {
     List<SubTask> getSubTasksFromEpic(int id);
 
     List<Task> getHistory();
+
+    List<Task> getAllTasks();
 }

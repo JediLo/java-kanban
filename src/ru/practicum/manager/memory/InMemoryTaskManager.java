@@ -1,12 +1,11 @@
 package ru.practicum.manager.memory;
 
+import ru.practicum.exceptons.EpicNotFoundExceptions;
+import ru.practicum.exceptons.ManagerSaveException;
 import ru.practicum.manager.general.Managers;
 import ru.practicum.manager.general.TaskManager;
 import ru.practicum.manager.history.HistoryManager;
-import ru.practicum.model.Epic;
-import ru.practicum.model.SubTask;
-import ru.practicum.model.Task;
-import ru.practicum.model.TaskProgress;
+import ru.practicum.model.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,7 +21,7 @@ public class InMemoryTaskManager implements TaskManager {
 
 
     @Override
-    public Task getTask(int id) {
+    public Task getTask(int id) throws ManagerSaveException {
         Task task = tasks.get(id);
         if (task == null) {
             return null;
@@ -32,7 +31,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Epic getEpicTask(int id) {
+    public Epic getEpicTask(int id) throws ManagerSaveException {
         Epic epic = epics.get(id);
         if (epic == null) {
             return null;
@@ -59,6 +58,7 @@ public class InMemoryTaskManager implements TaskManager {
         countTasks++;
         task.setTaskID(countTasks);
         task.setTaskProgress(TaskProgress.NEW);
+        task.setTaskType(TaskType.TASK);
         tasks.put(countTasks, task);
         return countTasks;
     }
@@ -71,24 +71,26 @@ public class InMemoryTaskManager implements TaskManager {
         countTasks++;
         task.setTaskID(countTasks);
         task.setTaskProgress(TaskProgress.NEW);
+        task.setTaskType(TaskType.EPIC);
         epics.put(countTasks, task);
         return countTasks;
     }
 
     @Override
-    public int addNewSubTask(SubTask subTaskask) {
-        if (subTaskask == null) {
+    public int addNewSubTask(SubTask subTask) {
+        if (subTask == null) {
             return -1;
         }
-        Epic epic = epics.get(subTaskask.getEpicTaskID());
+        Epic epic = epics.get(subTask.getEpicTaskID());
         if (epic == null) {
             return -1;
         } else {
             countTasks++;
-            subTaskask.setTaskID(countTasks);
-            subTaskask.setTaskProgress(TaskProgress.NEW);
-            subTasks.put(countTasks, subTaskask);
-            epic.addSubTask(subTaskask);
+            subTask.setTaskID(countTasks);
+            subTask.setTaskProgress(TaskProgress.NEW);
+            subTask.setTaskType(TaskType.SUBTASK);
+            subTasks.put(countTasks, subTask);
+            epic.addSubTask(subTask);
             checkAndReplaceTaskProgress(epic);
             return countTasks;
         }
@@ -241,6 +243,15 @@ public class InMemoryTaskManager implements TaskManager {
         return history.getHistory();
     }
 
+    @Override
+    public List<Task> getAllTasks() {
+        List<Task> allTasks = new ArrayList<>();
+        allTasks.addAll(getAllTask());
+        allTasks.addAll(getAllEpic());
+        allTasks.addAll(getAllSubTask());
+        return allTasks;
+    }
+
     private void checkAndReplaceTaskProgress(Epic epic) {
         if (epic == null) {
             return;
@@ -276,4 +287,24 @@ public class InMemoryTaskManager implements TaskManager {
 
     }
 
+    protected void loadTaskFromString(Task task) {
+        if (task == null) {
+            return;
+        }
+        if (task.getTaskID() > countTasks) {
+            countTasks = task.getTaskID();
+        }
+        if (task instanceof SubTask subtaskToMap) {
+            Epic epic = epics.get(subtaskToMap.getEpicTaskID());
+            if (epic == null) {
+                throw new EpicNotFoundExceptions("Не найден epic с ID" + subtaskToMap.getEpicTaskID());
+            }
+            epic.addSubTask(subtaskToMap);
+            subTasks.put(subtaskToMap.getTaskID(), subtaskToMap);
+        } else if (task instanceof Epic epicToMap) {
+            epics.put(epicToMap.getTaskID(), epicToMap);
+        } else {
+            tasks.put(task.getTaskID(), task);
+        }
+    }
 }

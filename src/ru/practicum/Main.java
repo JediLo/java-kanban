@@ -1,6 +1,7 @@
 package ru.practicum;
 
-
+import ru.practicum.manager.file.FileBackedTaskManager;
+import ru.practicum.manager.file.ManagerSCV;
 import ru.practicum.manager.general.Managers;
 import ru.practicum.manager.general.TaskManager;
 import ru.practicum.model.Epic;
@@ -14,12 +15,20 @@ public class Main {
     public static int idLastEpicAdd;
     public static int idLastSubTaskAdd;
 
+
     public static void main(String[] args) {
-        testAddAllTasks();
-        testRemoveTask();
-        testCheckAndReplaceTaskProgress();
-        testUpdateTasks();
-        testReturnTasks();
+        //testAddAllTasks();
+        //testRemoveTask();
+        //testCheckAndReplaceTaskProgress();
+        //testUpdateTasks();
+       // testReturnTasks();
+        //testFileBackedManager();
+
+
+    }
+    private static void testFileBackedManager(){
+        Task task = new Task("Name","description");
+        taskManager.addNewTask(task);
 
     }
 
@@ -133,6 +142,9 @@ public class Main {
         for (Task task : taskManager.getHistory()) {
             System.out.println(task);
         }
+        System.out.println("-".repeat(100));
+        System.out.println("-".repeat(100));
+        System.out.println(ManagerSCV.getSCVFromTasks(taskManager.getAllTasks()));
         System.out.println("-".repeat(100));
     }
 
