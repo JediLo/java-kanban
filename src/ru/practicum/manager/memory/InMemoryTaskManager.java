@@ -3,10 +3,7 @@ package ru.practicum.manager.memory;
 import ru.practicum.manager.general.Managers;
 import ru.practicum.manager.general.TaskManager;
 import ru.practicum.manager.history.HistoryManager;
-import ru.practicum.model.Epic;
-import ru.practicum.model.SubTask;
-import ru.practicum.model.Task;
-import ru.practicum.model.TaskProgress;
+import ru.practicum.model.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,12 +11,11 @@ import java.util.List;
 import java.util.Map;
 
 public class InMemoryTaskManager implements TaskManager {
-    private int countTasks = 0;
-    private final Map<Integer, Task> tasks = new HashMap<>();
-    private final Map<Integer, Epic> epics = new HashMap<>();
-    private final Map<Integer, SubTask> subTasks = new HashMap<>();
+    protected int countTasks = 0;
+    protected final Map<Integer, Task> tasks = new HashMap<>();
+    protected final Map<Integer, Epic> epics = new HashMap<>();
+    protected final Map<Integer, SubTask> subTasks = new HashMap<>();
     private final HistoryManager history = Managers.getDefaultHistory();
-
 
     @Override
     public Task getTask(int id) {
@@ -59,6 +55,7 @@ public class InMemoryTaskManager implements TaskManager {
         countTasks++;
         task.setTaskID(countTasks);
         task.setTaskProgress(TaskProgress.NEW);
+        task.setTaskType(TaskType.TASK);
         tasks.put(countTasks, task);
         return countTasks;
     }
@@ -71,24 +68,26 @@ public class InMemoryTaskManager implements TaskManager {
         countTasks++;
         task.setTaskID(countTasks);
         task.setTaskProgress(TaskProgress.NEW);
+        task.setTaskType(TaskType.EPIC);
         epics.put(countTasks, task);
         return countTasks;
     }
 
     @Override
-    public int addNewSubTask(SubTask subTaskask) {
-        if (subTaskask == null) {
+    public int addNewSubTask(SubTask subTask) {
+        if (subTask == null) {
             return -1;
         }
-        Epic epic = epics.get(subTaskask.getEpicTaskID());
+        Epic epic = epics.get(subTask.getEpicTaskID());
         if (epic == null) {
             return -1;
         } else {
             countTasks++;
-            subTaskask.setTaskID(countTasks);
-            subTaskask.setTaskProgress(TaskProgress.NEW);
-            subTasks.put(countTasks, subTaskask);
-            epic.addSubTask(subTaskask);
+            subTask.setTaskID(countTasks);
+            subTask.setTaskProgress(TaskProgress.NEW);
+            subTask.setTaskType(TaskType.SUBTASK);
+            subTasks.put(countTasks, subTask);
+            epic.addSubTask(subTask);
             checkAndReplaceTaskProgress(epic);
             return countTasks;
         }
@@ -275,5 +274,6 @@ public class InMemoryTaskManager implements TaskManager {
         }
 
     }
+
 
 }
