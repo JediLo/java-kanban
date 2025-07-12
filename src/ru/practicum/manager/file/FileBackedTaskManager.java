@@ -133,23 +133,23 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     private void loadTaskFromString(Task task) {
-        if (task == null) {
-            return;
+        switch (task) {
+            case null -> {
+                return;
+            }
+            case SubTask subtaskToMap -> {
+                Epic epic = epics.get(subtaskToMap.getEpicTaskID());
+                if (epic == null) {
+                    throw new EpicNotFoundExceptions("Не найден epic с ID" + subtaskToMap.getEpicTaskID());
+                }
+                epic.addSubTask(subtaskToMap);
+                subTasks.put(subtaskToMap.getTaskID(), subtaskToMap);
+            }
+            case Epic epicToMap -> epics.put(epicToMap.getTaskID(), epicToMap);
+            default -> tasks.put(task.getTaskID(), task);
         }
         if (task.getTaskID() > countTasks) {
             countTasks = task.getTaskID();
-        }
-        if (task instanceof SubTask subtaskToMap) {
-            Epic epic = epics.get(subtaskToMap.getEpicTaskID());
-            if (epic == null) {
-                throw new EpicNotFoundExceptions("Не найден epic с ID" + subtaskToMap.getEpicTaskID());
-            }
-            epic.addSubTask(subtaskToMap);
-            subTasks.put(subtaskToMap.getTaskID(), subtaskToMap);
-        } else if (task instanceof Epic epicToMap) {
-            epics.put(epicToMap.getTaskID(), epicToMap);
-        } else {
-            tasks.put(task.getTaskID(), task);
         }
     }
 

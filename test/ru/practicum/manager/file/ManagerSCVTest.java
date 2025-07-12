@@ -17,12 +17,12 @@ class ManagerSCVTest {
         List<Task> taskList = new ArrayList<>();
         taskList.add(task);
         String stringSCV= ManagerSCV.getSCVFromTasks(taskList);
-        String stringResult = ManagerSCV.getTitle() + System.lineSeparator() + "1,TASK,Name,IN_PROGRESS,description, ";
+        String stringResult = ManagerSCV.title + System.lineSeparator() + "1,TASK,Name,IN_PROGRESS,description, ";
         Assertions.assertEquals(stringSCV, stringResult);
     }
     @Test
     void shouldBeNullFromSCVTitle() {
-        Task stringSCV =  ManagerSCV.getTaskFromString( ManagerSCV.getTitle());
+        Task stringSCV =  ManagerSCV.getTaskFromString( ManagerSCV.title);
         assertNull(stringSCV);
     }
     @Test

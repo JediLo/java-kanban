@@ -1,6 +1,5 @@
 package ru.practicum.manager.memory;
 
-import ru.practicum.exceptons.ManagerSaveException;
 import ru.practicum.manager.general.Managers;
 import ru.practicum.manager.general.TaskManager;
 import ru.practicum.manager.history.HistoryManager;
@@ -18,9 +17,8 @@ public class InMemoryTaskManager implements TaskManager {
     protected final Map<Integer, SubTask> subTasks = new HashMap<>();
     private final HistoryManager history = Managers.getDefaultHistory();
 
-
     @Override
-    public Task getTask(int id) throws ManagerSaveException {
+    public Task getTask(int id) {
         Task task = tasks.get(id);
         if (task == null) {
             return null;
@@ -30,7 +28,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Epic getEpicTask(int id) throws ManagerSaveException {
+    public Epic getEpicTask(int id) {
         Epic epic = epics.get(id);
         if (epic == null) {
             return null;

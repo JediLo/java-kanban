@@ -5,16 +5,14 @@ import ru.practicum.model.*;
 import java.util.List;
 
 public class ManagerSCV {
-    protected static String getTitle() {
-        return "id,type,name,status,description,epic";
-    }
+    protected static final String title = "id,type,name,status,description,epic";
 
     public static String getSCVFromTasks(List<Task> tasks) {
         if (tasks == null) {
             return "";
         }
         StringBuilder sb = new StringBuilder();
-        sb.append(getTitle());
+        sb.append(title);
         Task taskToCSV;
         for (Task task : tasks) {
             String epicId = " ";
@@ -39,7 +37,7 @@ public class ManagerSCV {
     }
 
     public static <T> Task getTaskFromString(String line) {
-        if (line == null || line.equals(getTitle())) {
+        if (line == null || line.equals(title)) {
             return null;
         }
         String[] elements = line.split(",");

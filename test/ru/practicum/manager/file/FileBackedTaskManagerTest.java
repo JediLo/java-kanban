@@ -7,9 +7,6 @@ import ru.practicum.model.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class FileBackedTaskManagerTest {
 
@@ -18,7 +15,7 @@ class FileBackedTaskManagerTest {
         // Подготавливаем Task
         Task task = new Task(1, TaskType.TASK, "Name", TaskProgress.NEW, "description");
         // Формируем строку, которая должна быть в файле
-        String line = ManagerSCV.getTitle() + System.lineSeparator() + "1,TASK,Name,NEW,description, ";
+        String line = ManagerSCV.title + System.lineSeparator() + "1,TASK,Name,NEW,description, ";
         // Создаем файл
         File tempFile = File.createTempFile("tasks", ".csv");
         tempFile.deleteOnExit();
@@ -39,7 +36,7 @@ class FileBackedTaskManagerTest {
         // Подготавливаем Task
         Task task = new Task(1, TaskType.TASK, "Name", TaskProgress.NEW, "description");
         // Формируем строку, которая должна быть в файле
-        String line = ManagerSCV.getTitle() + System.lineSeparator() + "1,TASK,Name,NEW,description, ";
+        String line = ManagerSCV.title + System.lineSeparator() + "1,TASK,Name,NEW,description, ";
         // Создаем файл и менеджер с этим файлом
         File tempFile = File.createTempFile("tasks", ".csv");
         tempFile.deleteOnExit();
@@ -72,7 +69,7 @@ class FileBackedTaskManagerTest {
                 , TaskProgress.NEW, "description SubTask", 2);
         // Формируем строку, которая должна быть в файле
         StringBuilder sb = new StringBuilder();
-        sb.append(ManagerSCV.getTitle()).append(System.lineSeparator());
+        sb.append(ManagerSCV.title).append(System.lineSeparator());
         sb.append("1,TASK,Name task,NEW,description task, ").append(System.lineSeparator());
         sb.append("2,EPIC,Name epic,NEW,description epic, ").append(System.lineSeparator());
         sb.append("3,SUBTASK,Name SubTask,NEW,description SubTask,2");
@@ -96,9 +93,10 @@ class FileBackedTaskManagerTest {
         Epic epic = new Epic(2, TaskType.EPIC, "Name epic", TaskProgress.NEW, "description epic");
         SubTask subTask = new SubTask(3, TaskType.SUBTASK, "Name SubTask"
                 , TaskProgress.NEW, "description SubTask", 2);
+        epic.addSubTask(subTask);
         // Формируем строку, которая должна быть в файле
         StringBuilder sb = new StringBuilder();
-        sb.append(ManagerSCV.getTitle()).append(System.lineSeparator());
+        sb.append(ManagerSCV.title).append(System.lineSeparator());
         sb.append("1,TASK,Name task,NEW,description task, ").append(System.lineSeparator());
         sb.append("2,EPIC,Name epic,NEW,description epic, ").append(System.lineSeparator());
         sb.append("3,SUBTASK,Name SubTask,NEW,description SubTask,2");
@@ -115,7 +113,7 @@ class FileBackedTaskManagerTest {
         Epic epicFromManager = fileBackedTaskManager.getEpicTask(epic.getTaskID());
         SubTask subTaskFromManager = fileBackedTaskManager.getSubTask(subTask.getTaskID());
         equalsTasks(task, taskFromManager);
-        equalsTasks(epic, epicFromManager);
+        equalsEpic(epic, epicFromManager);
         equalsSubTasks(subTask, subTaskFromManager);
 
     }
@@ -125,7 +123,7 @@ class FileBackedTaskManagerTest {
         // Подготавливаем Task
         Task task = new Task(1, TaskType.TASK, "Name", TaskProgress.NEW, "description");
         // Формируем строку, которая должна быть в файле
-        String line = ManagerSCV.getTitle();
+        String line = ManagerSCV.title;
         // Создаем файл и менеджер с этим файлом
         File tempFile = File.createTempFile("tasks", ".csv");
         tempFile.deleteOnExit();
@@ -147,8 +145,8 @@ class FileBackedTaskManagerTest {
         Task updateTask = new Task(1, TaskType.TASK, "Update Task"
                 , TaskProgress.IN_PROGRESS, "Update Description");
         // Формируем строки, которые должна быть в файле до и после обновления
-        String line = ManagerSCV.getTitle() + System.lineSeparator() + "1,TASK,Name,NEW,description, ";
-        String lineUpdate = ManagerSCV.getTitle() + System.lineSeparator() + "1,TASK,Update Task,IN_PROGRESS,Update Description, ";
+        String line = ManagerSCV.title + System.lineSeparator() + "1,TASK,Name,NEW,description, ";
+        String lineUpdate = ManagerSCV.title + System.lineSeparator() + "1,TASK,Update Task,IN_PROGRESS,Update Description, ";
         // Создаем файл и менеджер с этим файлом
         File tempFile = File.createTempFile("tasks", ".csv");
         tempFile.deleteOnExit();
@@ -174,5 +172,10 @@ class FileBackedTaskManagerTest {
     private static void equalsSubTasks(SubTask expected, SubTask actual) {
         equalsTasks(expected, actual);
         Assertions.assertEquals(expected.getEpicTaskID(), actual.getEpicTaskID());
+    }
+
+    private static void equalsEpic(Epic expected, Epic actual) {
+        equalsTasks(expected, actual);
+        Assertions.assertEquals(expected.getSubTasksID(), actual.getSubTasksID());
     }
 }
