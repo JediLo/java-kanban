@@ -116,7 +116,7 @@ class FileBackedTaskManagerTest {
         SubTask subTaskFromManager = fileBackedTaskManager.getSubTask(subTask.getTaskID());
         equalsTasks(task, taskFromManager);
         equalsTasks(epic, epicFromManager);
-        equalsTasks(subTask, subTaskFromManager);
+        equalsSubTasks(subTask, subTaskFromManager);
 
     }
 
@@ -169,9 +169,10 @@ class FileBackedTaskManagerTest {
         Assertions.assertEquals(expected.getName(), actual.getName());
         Assertions.assertEquals(expected.getTaskProgress(), actual.getTaskProgress());
         Assertions.assertEquals(expected.getDescription(), actual.getDescription());
-        if (expected instanceof SubTask expectedSubTask && actual instanceof SubTask actualSubtask) {
-            Assertions.assertEquals(expectedSubTask.getEpicTaskID(), actualSubtask.getEpicTaskID());
-        }
+    }
 
+    private static void equalsSubTasks(SubTask expected, SubTask actual) {
+        equalsTasks(expected, actual);
+        Assertions.assertEquals(expected.getEpicTaskID(), actual.getEpicTaskID());
     }
 }
