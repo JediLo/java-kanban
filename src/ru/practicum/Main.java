@@ -144,7 +144,6 @@ public class Main {
         }
         System.out.println("-".repeat(100));
         System.out.println("-".repeat(100));
-        System.out.println(ManagerSCV.getSCVFromTasks(taskManager.getAllTasks()));
         System.out.println("-".repeat(100));
     }
 

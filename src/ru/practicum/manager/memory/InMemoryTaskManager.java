@@ -1,6 +1,5 @@
 package ru.practicum.manager.memory;
 
-import ru.practicum.exceptons.EpicNotFoundExceptions;
 import ru.practicum.exceptons.ManagerSaveException;
 import ru.practicum.manager.general.Managers;
 import ru.practicum.manager.general.TaskManager;
@@ -13,10 +12,10 @@ import java.util.List;
 import java.util.Map;
 
 public class InMemoryTaskManager implements TaskManager {
-    private int countTasks = 0;
-    private final Map<Integer, Task> tasks = new HashMap<>();
-    private final Map<Integer, Epic> epics = new HashMap<>();
-    private final Map<Integer, SubTask> subTasks = new HashMap<>();
+    protected int countTasks = 0;
+    protected final Map<Integer, Task> tasks = new HashMap<>();
+    protected final Map<Integer, Epic> epics = new HashMap<>();
+    protected final Map<Integer, SubTask> subTasks = new HashMap<>();
     private final HistoryManager history = Managers.getDefaultHistory();
 
 
@@ -243,15 +242,6 @@ public class InMemoryTaskManager implements TaskManager {
         return history.getHistory();
     }
 
-    @Override
-    public List<Task> getAllTasks() {
-        List<Task> allTasks = new ArrayList<>();
-        allTasks.addAll(getAllTask());
-        allTasks.addAll(getAllEpic());
-        allTasks.addAll(getAllSubTask());
-        return allTasks;
-    }
-
     private void checkAndReplaceTaskProgress(Epic epic) {
         if (epic == null) {
             return;
@@ -287,24 +277,5 @@ public class InMemoryTaskManager implements TaskManager {
 
     }
 
-    protected void loadTaskFromString(Task task) {
-        if (task == null) {
-            return;
-        }
-        if (task.getTaskID() > countTasks) {
-            countTasks = task.getTaskID();
-        }
-        if (task instanceof SubTask subtaskToMap) {
-            Epic epic = epics.get(subtaskToMap.getEpicTaskID());
-            if (epic == null) {
-                throw new EpicNotFoundExceptions("Не найден epic с ID" + subtaskToMap.getEpicTaskID());
-            }
-            epic.addSubTask(subtaskToMap);
-            subTasks.put(subtaskToMap.getTaskID(), subtaskToMap);
-        } else if (task instanceof Epic epicToMap) {
-            epics.put(epicToMap.getTaskID(), epicToMap);
-        } else {
-            tasks.put(task.getTaskID(), task);
-        }
-    }
+
 }

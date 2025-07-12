@@ -1,5 +1,6 @@
 package ru.practicum.manager.file;
 
+import ru.practicum.exceptons.EpicNotFoundExceptions;
 import ru.practicum.exceptons.ManagerSaveException;
 import ru.practicum.manager.memory.InMemoryTaskManager;
 import ru.practicum.model.Epic;
@@ -9,63 +10,45 @@ import ru.practicum.model.Task;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
 
+    private final File file;
+
+    public FileBackedTaskManager(File file) {
+        this.file = file;
+    }
+
     public static FileBackedTaskManager loadFromFile(File fileTasks) {
-        FileBackedTaskManager manager = new FileBackedTaskManager();
-        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(fileTasks))) {
-            String line;
-            while ((line = bufferedReader.readLine()) != null && !line.isEmpty()) {
-                Task task = ManagerSCV.getTaskFromString(line);
-                manager.loadTaskFromString(task);
+        FileBackedTaskManager manager = new FileBackedTaskManager(fileTasks);
+
+        if (manager.file.exists()) {
+            try (BufferedReader bufferedReader = new BufferedReader(new FileReader(manager.file))) {
+                String line;
+                while ((line = bufferedReader.readLine()) != null && !line.isEmpty()) {
+                    Task task = ManagerSCV.getTaskFromString(line);
+                    manager.loadTaskFromString(task);
+                }
+            } catch (IOException e) {
+                throw new RuntimeException("Не удалось загрузить данные из файла", e);
             }
-        } catch (IOException e) {
-            throw new RuntimeException("Не удалось загрузить данные из файла", e);
         }
         return manager;
     }
 
-    void saveToSCV(String toSCV, String file) {
+    private void saveToSCV(String toSCV, File file) {
         try {
-            Files.writeString(Path.of(file), toSCV);
+            Files.writeString(Path.of(file.getPath()), toSCV);
         } catch (IOException e) {
             throw new ManagerSaveException("Не удалось записать файл", e);
         }
     }
 
 
-    void save() {
-        String fileNameTasks = "tasks.csv";
-        saveToSCV(ManagerSCV.getSCVFromTasks(getAllTasks()), fileNameTasks);
-    }
-
-
-    @Override
-    public Task getTask(int id) {
-        Task task = super.getTask(id);
-        if (task != null) {
-            save();
-        }
-        return task;
-    }
-
-    @Override
-    public Epic getEpicTask(int id) {
-        Epic epic = super.getEpicTask(id);
-        if (epic != null) {
-            save();
-        }
-        return epic;
-    }
-
-    @Override
-    public SubTask getSubTask(int id) {
-        SubTask subTask = super.getSubTask(id);
-        if (subTask != null) {
-            save();
-        }
-        return subTask;
+    private void save() {
+        saveToSCV(ManagerSCV.getSCVFromTasks(getAllTasks()), file);
     }
 
     @Override
@@ -93,6 +76,24 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             save();
         }
         return id;
+    }
+
+    @Override
+    public void updateEpic(Epic newEpic) {
+        super.updateEpic(newEpic);
+        save();
+    }
+
+    @Override
+    public void updateTask(Task newTask) {
+        super.updateTask(newTask);
+        save();
+    }
+
+    @Override
+    public void updateSubtask(SubTask newSubTask) {
+        super.updateSubtask(newSubTask);
+        save();
     }
 
     @Override
@@ -129,5 +130,34 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     public void deleteSubTasks() {
         super.deleteSubTasks();
         save();
+    }
+
+    private void loadTaskFromString(Task task) {
+        if (task == null) {
+            return;
+        }
+        if (task.getTaskID() > countTasks) {
+            countTasks = task.getTaskID();
+        }
+        if (task instanceof SubTask subtaskToMap) {
+            Epic epic = epics.get(subtaskToMap.getEpicTaskID());
+            if (epic == null) {
+                throw new EpicNotFoundExceptions("Не найден epic с ID" + subtaskToMap.getEpicTaskID());
+            }
+            epic.addSubTask(subtaskToMap);
+            subTasks.put(subtaskToMap.getTaskID(), subtaskToMap);
+        } else if (task instanceof Epic epicToMap) {
+            epics.put(epicToMap.getTaskID(), epicToMap);
+        } else {
+            tasks.put(task.getTaskID(), task);
+        }
+    }
+
+    private List<Task> getAllTasks() {
+        List<Task> allTasks = new ArrayList<>();
+        allTasks.addAll(getAllTask());
+        allTasks.addAll(getAllEpic());
+        allTasks.addAll(getAllSubTask());
+        return allTasks;
     }
 }

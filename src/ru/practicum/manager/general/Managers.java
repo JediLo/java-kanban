@@ -11,10 +11,7 @@ public class Managers {
 
     public static FileBackedTaskManager getDefault() {
         File fileTask = new File("tasks.csv");
-        if (fileTask.exists()) {
-            return FileBackedTaskManager.loadFromFile(fileTask);
-        }
-        return new FileBackedTaskManager();
+        return FileBackedTaskManager.loadFromFile(fileTask);
     }
 
     public static HistoryManager getDefaultHistory() {
