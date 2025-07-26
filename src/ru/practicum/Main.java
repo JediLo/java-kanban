@@ -18,17 +18,18 @@ public class Main {
     private static final LocalDateTime timeToFourTask = timeToThirdTask.plusMinutes(2);
     private static final Duration duration = Duration.ofMinutes(1);
     private static int countID = 0;
+
     public static void main(String[] args) {
 
         //addTasksToTest();
-        printAllTask();
+        //printAllTask();
         //System.out.println();
         //addTasksToTest();
     }
 
     private static void testFileBackedManager() {
-        Task task = new Task(1, TaskType.TASK,"Name"
-                ,TaskProgress.NEW, "description", timeToFirstTask,duration);
+        Task task = new Task(1, TaskType.TASK, "Name",
+                TaskProgress.NEW, "description", timeToFirstTask, duration);
         taskManager.addNewTask(task);
 
     }
@@ -46,10 +47,6 @@ public class Main {
 
 
     }
-
-
-
-
 
 
     public static void printAllTask() {
@@ -82,36 +79,36 @@ public class Main {
 
     public static void addTasksToTest() {
         // Создаем и добавляем Task
-        countID ++;
-        Task task = new Task(countID, TaskType.TASK,"Задача Task"
-                ,TaskProgress.NEW, "Описание задачи Task", timeToFirstTask,duration);
+        countID++;
+        Task task = new Task(countID, TaskType.TASK, "Задача Task",
+                TaskProgress.NEW, "Описание задачи Task", timeToFirstTask, duration);
         idLastTaskAdd = taskManager.addNewTask(task);
         // Создаем и добавляем Epic
-        countID ++;
-        Epic epic = new Epic(countID,TaskType.EPIC,"Задача Epic"
-                ,TaskProgress.NEW, "Описание задачи Epic");
+        countID++;
+        Epic epic = new Epic(countID, TaskType.EPIC, "Задача Epic",
+                TaskProgress.NEW, "Описание задачи Epic");
         idLastEpicAdd = taskManager.addNewEpicTask(epic);
         // Создаем и добавляем пустой Epic
-        countID ++;
-        Epic secondEpic = new Epic(countID,TaskType.EPIC,"Задача Epic"
-                ,TaskProgress.NEW, "Описание задачи Epic");
+        countID++;
+        Epic secondEpic = new Epic(countID, TaskType.EPIC, "Задача Epic",
+                TaskProgress.NEW, "Описание задачи Epic");
         taskManager.addNewEpicTask(secondEpic);
         // Создаем и добавляем SubTask
         countID++;
-        SubTask subTask = new SubTask(countID,TaskType.SUBTASK,"Задача SubTask"
-                , TaskProgress.NEW, "Описание задачи SubTask"
-                , idLastEpicAdd, timeToSecondTask,duration);
+        SubTask subTask = new SubTask(countID, TaskType.SUBTASK, "Задача SubTask",
+                TaskProgress.NEW, "Описание задачи SubTask",
+                idLastEpicAdd, timeToSecondTask, duration);
         idLastSubTaskAdd = taskManager.addNewSubTask(subTask);
         // Создаем и добавляем SubTask
         countID++;
-        subTask = new SubTask(countID, TaskType.SUBTASK,"Задача SubTask 1"
-                , TaskProgress.NEW, "Описание задачи SubTask 1", idLastEpicAdd, timeToThirdTask, duration);
+        subTask = new SubTask(countID, TaskType.SUBTASK, "Задача SubTask 1",
+                TaskProgress.NEW, "Описание задачи SubTask 1", idLastEpicAdd, timeToThirdTask, duration);
         idLastSubTaskAdd = taskManager.addNewSubTask(subTask);
         // Создаем и добавляем SubTask
         countID++;
-        subTask = new SubTask(countID, TaskType.SUBTASK,"Задача SubTask 2"
-                , TaskProgress.NEW, "Описание задачи SubTask 2"
-                ,idLastEpicAdd,timeToFourTask,duration);
+        subTask = new SubTask(countID, TaskType.SUBTASK, "Задача SubTask 2",
+                TaskProgress.NEW, "Описание задачи SubTask 2",
+                idLastEpicAdd, timeToFourTask, duration);
         idLastSubTaskAdd = taskManager.addNewSubTask(subTask);
     }
 
