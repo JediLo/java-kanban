@@ -2,10 +2,15 @@ package ru.practicum.manager.file;
 
 import ru.practicum.model.*;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.List;
 
 public class ManagerSCV {
-    protected static final String title = "id,type,name,status,description,epic";
+    protected static final String title = "id,type,name,status,description,epic,start,duration";
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm_dd_MM_yyyy");
 
     public static String getSCVFromTasks(List<Task> tasks) {
         if (tasks == null) {
@@ -30,7 +35,17 @@ public class ManagerSCV {
                     .append(taskToCSV.getName()).append(",")
                     .append(taskToCSV.getTaskProgress()).append(",")
                     .append(taskToCSV.getDescription()).append(",")
-                    .append(epicId)
+                    .append(epicId).append(",");
+            if (taskToCSV.getStartTime() != null) {
+                sb.append(taskToCSV.getStartTime().format(formatter)).append(",");
+            } else {
+                sb.append(" ,");
+            }
+            if (taskToCSV.getDuration() != null) {
+                sb.append(taskToCSV.getDuration().toNanos());
+            } else {
+                sb.append(" ");
+            }
             ;
         }
         return sb.toString();
@@ -46,10 +61,19 @@ public class ManagerSCV {
         String name = elements[2];
         TaskProgress taskProgress = TaskProgress.valueOf(elements[3]);
         String description = elements[4];
+        LocalDateTime startTime = null;
+        Duration duration = null;
+        if (!elements[6].isBlank()) {
+            startTime = LocalDateTime.parse(elements[6], formatter);
+        }
+        if (!elements[7].isBlank()) {
+            duration = Duration.ofNanos(Long.parseLong(elements[7]));
+        }
         return switch (taskType) {
-            case TASK -> new Task(id, taskType, name, taskProgress, description);
+            case TASK -> new Task(id, taskType, name, taskProgress, description, startTime, duration);
             case EPIC -> new Epic(id, taskType, name, taskProgress, description);
-            case SUBTASK -> new SubTask(id, taskType, name, taskProgress, description, Integer.parseInt(elements[5]));
+            case SUBTASK -> new SubTask(id, taskType, name, taskProgress, description, Integer.parseInt(elements[5])
+                    , startTime, duration);
         };
     }
 }

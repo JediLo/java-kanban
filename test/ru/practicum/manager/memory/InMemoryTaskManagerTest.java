@@ -2,15 +2,19 @@ package ru.practicum.manager.memory;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ru.practicum.model.Epic;
-import ru.practicum.model.SubTask;
-import ru.practicum.model.Task;
-import ru.practicum.model.TaskProgress;
+import ru.practicum.model.*;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class InMemoryTaskManagerTest {
     private InMemoryTaskManager manager;
+    LocalDateTime timeToFirstTask = LocalDateTime.now();
+    LocalDateTime timeToSecondTask = timeToFirstTask.plusMinutes(2);
+    LocalDateTime timeToThirdTask = timeToSecondTask.plusMinutes(2);
+    Duration duration = Duration.ofMinutes(1);
 
     @BeforeEach
     void setup() {
@@ -20,7 +24,8 @@ class InMemoryTaskManagerTest {
     @Test
     void shouldAddTaskWithNewStatusAndCorrectId() {
 
-        Task task = new Task("Name Task", "Description Task");
+        Task task = new Task(1, TaskType.TASK, "Name Task"
+                , TaskProgress.NEW, "Description Task", timeToFirstTask, duration);
         int idTask = manager.addNewTask(task);
         assertEquals(TaskProgress.NEW, manager.getTask(idTask).getTaskProgress(),
                 "Статус не был обновлен на NEW в Task");
@@ -30,7 +35,8 @@ class InMemoryTaskManagerTest {
     @Test
     void shouldAddEpicWithNewStatusAndCorrectId() {
 
-        Epic epic = new Epic("Name Epic", "Description Epic");
+        Epic epic = new Epic(1, TaskType.EPIC, "Name Epic", TaskProgress.NEW
+                , "Description Epic");
         int idEpic = manager.addNewEpicTask(epic);
         assertEquals(TaskProgress.NEW, manager.getEpicTask(idEpic).getTaskProgress(),
                 "Статус не был обновлен на NEW в Epic");
@@ -40,9 +46,10 @@ class InMemoryTaskManagerTest {
     @Test
     void shouldAddSubTaskWithNewStatusAndCorrectId() {
 
-        Epic epic = new Epic("Name Epic", "Description Epic");
+        Epic epic = new Epic(1, TaskType.EPIC, "Name Epic", TaskProgress.NEW, "Description Epic");
         int idEpic = manager.addNewEpicTask(epic);
-        SubTask subTask = new SubTask("Name Task", "Description Task", idEpic);
+        SubTask subTask = new SubTask(2, TaskType.SUBTASK, "Name Task"
+                , TaskProgress.NEW, "Description Task", idEpic, timeToFirstTask, duration);
         int idSubTask = manager.addNewSubTask(subTask);
 
         assertEquals(TaskProgress.NEW, manager.getSubTask(idSubTask).getTaskProgress(),
@@ -52,11 +59,12 @@ class InMemoryTaskManagerTest {
 
     @Test
     void shouldNewNameAndDescriptionAndTaskProgressWhenUpdateTask() {
-        Task task = new Task("Name Task", "Description Task");
-        int idTask = manager.addNewTask(task);
-        Task updateTask = new Task("Name New Task", "Description New Task");
-        updateTask.setTaskID(idTask);
-        updateTask.setTaskProgress(TaskProgress.IN_PROGRESS);
+        int idTask = 1;
+        Task task = new Task(idTask, TaskType.TASK, "Name Task"
+                , TaskProgress.NEW, "Description Task", timeToFirstTask, duration);
+        manager.addNewTask(task);
+        Task updateTask = new Task(idTask, TaskType.TASK, "Name New Task"
+                , TaskProgress.IN_PROGRESS, "Description New Task", timeToSecondTask, duration);
         manager.updateTask(updateTask);
         assertEquals("Name New Task", manager.getTask(idTask).getName(), "Name не обновлен");
         assertEquals("Description New Task",
@@ -66,10 +74,12 @@ class InMemoryTaskManagerTest {
 
     @Test
     void shouldNewNameAndDescriptionWhenUpdateEpic() {
-        Epic epic = new Epic("Name Epic", "Description Epic");
-        int idEpic = manager.addNewEpicTask(epic);
-        Epic updateEpic = new Epic("Name New Epic", "Description New Epic");
-        updateEpic.setTaskID(idEpic);
+        int idEpic = 1;
+        Epic epic = new Epic(idEpic, TaskType.EPIC, "Name Epic"
+                , TaskProgress.NEW, "Description Epic");
+        manager.addNewEpicTask(epic);
+        Epic updateEpic = new Epic(idEpic, TaskType.EPIC, "Name New Epic"
+                , TaskProgress.NEW, "Description New Epic");
         manager.updateEpic(updateEpic);
         assertEquals("Name New Epic", manager.getEpicTask(idEpic).getName(), "Name не обновлен");
         assertEquals("Description New Epic",
@@ -78,7 +88,7 @@ class InMemoryTaskManagerTest {
 
     @Test
     void shouldNewNameAndDescriptionAndTaskProgressWhenUpdateSubTask() {
-        int idEpic = manager.addNewEpicTask(new Epic("Name Epic", "Description Epic"));
+        int idEpic = manager.addNewEpicTask(new Epic(1, TaskType.EPIC, "Name Epic", TaskProgress.NEW, "Description Epic"));
         SubTask updateSubTask = createSubTask(idEpic);
         int idSubTask = updateSubTask.getTaskID();
         updateSubTask.setTaskProgress(TaskProgress.IN_PROGRESS);
@@ -94,7 +104,8 @@ class InMemoryTaskManagerTest {
 
     @Test
     void shouldTaskProgressUpdateWhenUpdateSubTaskProgressForOneSubTask() {
-        Epic epic = new Epic("Name Epic", "Description Epic");
+        Epic epic = new Epic(1, TaskType.EPIC, "Name Epic"
+                , TaskProgress.NEW, "Description Epic");
         int idEpic = manager.addNewEpicTask(epic);
         SubTask updateSubTask = createSubTask(idEpic);
 
@@ -109,15 +120,25 @@ class InMemoryTaskManagerTest {
 
     @Test
     void shouldTaskProgressUpdateWhenUpdateSubTaskProgressForMoreSubTask() {
-        Epic epic = new Epic("Name Epic", "Description Epic");
+        Epic epic = new Epic(1, TaskType.EPIC, "Name Epic"
+                , TaskProgress.NEW, "Description Epic");
         int idEpic = manager.addNewEpicTask(epic);
 
-        SubTask subTaskFirst = createSubTask(idEpic);
+        SubTask subTaskFirst = new SubTask(2, TaskType.SUBTASK, "Name SubTask"
+                , TaskProgress.NEW, "Description SubTask", idEpic, timeToFirstTask, duration);
         subTaskFirst.setTaskProgress(TaskProgress.IN_PROGRESS);
+        manager.addNewSubTask(subTaskFirst);
         manager.updateSubtask(subTaskFirst);
-        SubTask subTaskMiddle = createSubTask(idEpic);
-        SubTask subTaskLast = createSubTask(idEpic);
-
+        SubTask subTaskMiddle = new SubTask(3, TaskType.SUBTASK, "Name SubTask"
+                , TaskProgress.NEW, "Description SubTask", idEpic, timeToSecondTask, duration);
+        manager.addNewSubTask(subTaskMiddle);
+        subTaskMiddle.setTaskProgress(TaskProgress.IN_PROGRESS);
+        manager.updateSubtask(subTaskMiddle);
+        SubTask subTaskLast = new SubTask(4, TaskType.SUBTASK, "Name SubTask"
+                , TaskProgress.NEW, "Description SubTask", idEpic, timeToThirdTask, duration);
+        manager.addNewSubTask(subTaskLast);
+        subTaskLast.setTaskProgress(TaskProgress.IN_PROGRESS);
+        manager.updateSubtask(subTaskLast);
         assertEquals(TaskProgress.IN_PROGRESS, epic.getTaskProgress(), "Статус не изменился на IN_PROGRESS");
         subTaskFirst.setTaskProgress(TaskProgress.DONE);
         manager.updateSubtask(subTaskFirst);
@@ -129,23 +150,23 @@ class InMemoryTaskManagerTest {
     }
 
     private SubTask createSubTask(int idEpic) {
-        SubTask subTask = new SubTask("Name SubTask", "Description SubTask", idEpic);
+        SubTask subTask = new SubTask(2, TaskType.SUBTASK, "Name SubTask"
+                , TaskProgress.NEW, "Description SubTask", idEpic, timeToFirstTask, duration);
         int idSubTask = manager.addNewSubTask(subTask);
-        SubTask updateSubTask = new SubTask("Name New SubTask", "Description New SubTask", idEpic);
-        updateSubTask.setTaskID(idSubTask);
-        updateSubTask.setEpicTaskID(idEpic);
+        SubTask updateSubTask = new SubTask(idSubTask, TaskType.SUBTASK, "Name New SubTask"
+                , TaskProgress.NEW, "Description New SubTask", idEpic, timeToSecondTask, duration);
         return updateSubTask;
     }
 
     @Test
     void shouldBeRemoveFromHistoryWhenRemoveTask() {
-        Task task1 = new Task("Name Task 1", "Des Task 1");
-        task1.setTaskID(1);
-        manager.addNewTask(task1);
+        Task firstTask = new Task(1, TaskType.TASK, "Name Task"
+                , TaskProgress.NEW, "Description Task", timeToFirstTask, duration);
+        manager.addNewTask(firstTask);
         manager.getTask(1);
-        Task task2 = new Task("Name Task 2", "Des Task 2");
-        task2.setTaskID(2);
-        manager.addNewTask(task2);
+        Task secondTask = new Task(2, TaskType.TASK, "Name Task 2"
+                , TaskProgress.NEW, "Des Task 2", timeToSecondTask, duration);
+        manager.addNewTask(secondTask);
         manager.getTask(2);
         //Длина Истории должна быть 2. Т.к. у нас есть 2 задачи и обе были вызваны методом get
         int sizeHistoryBeforeRemove = 2;
@@ -159,12 +180,12 @@ class InMemoryTaskManagerTest {
 
     @Test
     void shouldBeRemoveFromHistoryWhenRemoveEpic() {
-        Epic epic1 = new Epic("Name Epic 1", "Des Epic 1");
-        epic1.setTaskID(1);
+        Epic epic1 = new Epic(1, TaskType.EPIC, "Name Epic 1"
+                , TaskProgress.NEW, "Des Epic 1");
         manager.addNewEpicTask(epic1);
         manager.getEpicTask(1);
-        Epic epic2 = new Epic("Name Epic 2", "Des Epic 2");
-        epic2.setTaskID(2);
+        Epic epic2 = new Epic(2, TaskType.EPIC, "Name Epic 2"
+                , TaskProgress.NEW, "Des Epic 2");
         manager.addNewEpicTask(epic2);
         manager.getEpicTask(2);
         //Длина Истории должна быть 2. Т.к. у нас есть 2 эпик и обе были вызваны методом get
@@ -178,13 +199,12 @@ class InMemoryTaskManagerTest {
 
     @Test
     void shouldBeRemoveFromHistoryWhenRemoveSubTask() {
-        Epic epic1 = new Epic("Name Epic 1", "Des Epic 1");
-        epic1.setTaskID(1);
+        Epic epic1 = new Epic(1, TaskType.EPIC, "Name Epic 1", TaskProgress.NEW, "Des Epic 1");
         manager.addNewEpicTask(epic1);
-        SubTask subTask1 = new SubTask("Name SubTask", "Des Subtask", epic1.getTaskID());
-        SubTask subTask2 = new SubTask("Name SubTask 2", "Des Subtask 2", epic1.getTaskID());
-        subTask1.setTaskID(2);
-        subTask2.setTaskID(3);
+        SubTask subTask1 = new SubTask(2, TaskType.SUBTASK, "Name SubTask"
+                , TaskProgress.NEW, "Des Subtask", epic1.getTaskID(), timeToSecondTask, duration);
+        SubTask subTask2 = new SubTask(3, TaskType.SUBTASK, "Name SubTask 2"
+                , TaskProgress.NEW, "Des Subtask 2", epic1.getTaskID(), timeToThirdTask, duration);
         manager.addNewSubTask(subTask1);
         manager.addNewSubTask(subTask2);
         manager.getSubTask(subTask1.getTaskID());
@@ -201,14 +221,15 @@ class InMemoryTaskManagerTest {
 
     @Test
     void shouldBeRemoveFromHistoryWhenRemoveTasks() {
-        Task task1 = new Task("Name Task 1", "Des Task 1");
-        task1.setTaskID(1);
-        manager.addNewTask(task1);
-        manager.getTask(1);
-        Task task2 = new Task("Name Task 2", "Des Task 2");
-        task2.setTaskID(2);
-        manager.addNewTask(task2);
-        manager.getTask(2);
+        Task firstTask = new Task(1, TaskType.TASK, "Name Task"
+                , TaskProgress.NEW, "Description Task", timeToFirstTask, duration);
+
+        manager.addNewTask(firstTask);
+        manager.getTask(firstTask.getTaskID());
+        Task secondTask = new Task(2, TaskType.TASK, "Name Task 2"
+                , TaskProgress.NEW, "Des Task 2", timeToSecondTask, duration);
+        manager.addNewTask(secondTask);
+        manager.getTask(secondTask.getTaskID());
         //Длина Истории должна быть 2. Т.к. у нас есть 2 задачи и обе были вызваны методом get
         int sizeHistoryBeforeRemove = 2;
         assertEquals(sizeHistoryBeforeRemove, manager.getHistory().size());
@@ -221,18 +242,16 @@ class InMemoryTaskManagerTest {
 
     @Test
     void shouldBeRemoveFromHistoryWhenRemoveEpics() {
-        Epic epic1 = new Epic("Name Epic 1", "Des Epic 1");
-        epic1.setTaskID(1);
+        Epic epic1 = new Epic(1, TaskType.EPIC, "Name Epic 1", TaskProgress.NEW, "Des Epic 1");
         manager.addNewEpicTask(epic1);
         manager.getEpicTask(epic1.getTaskID());
-        Epic epic2 = new Epic("Name Epic 2", "Des Epic 2");
-        epic2.setTaskID(2);
+        Epic epic2 = new Epic(2, TaskType.EPIC, "Name Epic 2", TaskProgress.NEW, "Des Epic 2");
         manager.addNewEpicTask(epic2);
         manager.getEpicTask(epic2.getTaskID());
-        SubTask subTask1 = new SubTask("Name SubTask", "Des Subtask", epic1.getTaskID());
-        SubTask subTask2 = new SubTask("Name SubTask 2", "Des Subtask 2", epic1.getTaskID());
-        subTask1.setTaskID(3);
-        subTask2.setTaskID(4);
+        SubTask subTask1 = new SubTask(3, TaskType.SUBTASK, "Name SubTask"
+                , TaskProgress.NEW, "Des Subtask", epic1.getTaskID(), timeToFirstTask, duration);
+        SubTask subTask2 = new SubTask(4, TaskType.SUBTASK, "Name SubTask 2"
+                , TaskProgress.NEW, "Des Subtask 2", epic1.getTaskID(), timeToSecondTask, duration);
         manager.addNewSubTask(subTask1);
         manager.addNewSubTask(subTask2);
         manager.getSubTask(subTask1.getTaskID());
@@ -248,14 +267,13 @@ class InMemoryTaskManagerTest {
 
     @Test
     void shouldBeRemoveFromHistoryWhenRemoveSubTasks() {
-        Epic epic1 = new Epic("Name Epic 1", "Des Epic 1");
-        epic1.setTaskID(1);
+        Epic epic1 = new Epic(1, TaskType.EPIC, "Name Epic 1", TaskProgress.NEW, "Des Epic 1");
         manager.addNewEpicTask(epic1);
         manager.getEpicTask(epic1.getTaskID());
-        SubTask subTask1 = new SubTask("Name SubTask", "Des Subtask", epic1.getTaskID());
-        SubTask subTask2 = new SubTask("Name SubTask 2", "Des Subtask 2", epic1.getTaskID());
-        subTask1.setTaskID(2);
-        subTask2.setTaskID(3);
+        SubTask subTask1 = new SubTask(2, TaskType.SUBTASK, "Name SubTask"
+                , TaskProgress.NEW, "Des Subtask", epic1.getTaskID(), timeToFirstTask, duration);
+        SubTask subTask2 = new SubTask(3, TaskType.SUBTASK, "Name SubTask 2"
+                , TaskProgress.NEW, "Des Subtask 2", epic1.getTaskID(), timeToSecondTask, duration);
         manager.addNewSubTask(subTask1);
         manager.addNewSubTask(subTask2);
         manager.getSubTask(subTask1.getTaskID());
@@ -269,5 +287,136 @@ class InMemoryTaskManagerTest {
         assertEquals(sizeHistoryAfterRemove, manager.getHistory().size());
     }
 
+    @Test
+    void shouldNotAddTasksWhenTimeOverlaps() {
+        // Создаем и добавляем в менеджер задачу
+        Task task = new Task(1, TaskType.TASK, "Name Task"
+                , TaskProgress.NEW, "Description Task", timeToFirstTask, duration);
+        manager.addNewTask(task);
+        // Создаем и пытаемся добавить в наш менеджер задачу и подзадачу с тем же временем что и в первой
+        Task overlappingTask = new Task(2, TaskType.TASK, "Name Task"
+                , TaskProgress.NEW, "Description Task", timeToFirstTask, duration);
+        Epic epic = new Epic(3, TaskType.EPIC, "Name Epic 1", TaskProgress.NEW, "Des Epic 1");
+        SubTask overlappingSubtask = new SubTask(4, TaskType.SUBTASK, "Name SubTask"
+                , TaskProgress.NEW, "Des Subtask"
+                , epic.getTaskID(), timeToFirstTask, duration);
+        int idOverlappingTask = manager.addNewTask(overlappingTask);
+        manager.addNewEpicTask(epic);
+        int idOverlappingSubTask = manager.addNewSubTask(overlappingSubtask);
+
+        assertEquals(-1, idOverlappingTask);
+        assertEquals(-1, idOverlappingSubTask);
+    }
+
+    @Test
+    void shouldNotAddTaskWhenStartBeforeAndEndsDuringExistingTask() {
+        Duration twoMinutes = Duration.ofMinutes(2);
+        Duration fiveMinutes = Duration.ofMinutes(5);
+        // Создаем и добавляем в менеджер задачу
+        Task task = new Task(1, TaskType.TASK, "Name Task"
+                , TaskProgress.NEW, "Description Task", timeToThirdTask, twoMinutes);
+        manager.addNewTask(task);
+        // Создаем и пытаемся добавить в наш менеджер задачу и подзадачу c временем окончания заходящим в первую задачу
+        Task overlappingTask = new Task(2, TaskType.TASK, "Name Task"
+                , TaskProgress.NEW, "Description Task", timeToFirstTask, fiveMinutes);
+        Epic epic = new Epic(3, TaskType.EPIC, "Name Epic 1", TaskProgress.NEW, "Des Epic 1");
+        SubTask overlappingSubtask = new SubTask(4, TaskType.SUBTASK, "Name SubTask"
+                , TaskProgress.NEW, "Des Subtask"
+                , epic.getTaskID(), timeToFirstTask, fiveMinutes);
+        int idOverlappingTask = manager.addNewTask(overlappingTask);
+        manager.addNewEpicTask(epic);
+        int idOverlappingSubTask = manager.addNewSubTask(overlappingSubtask);
+
+        assertEquals(-1, idOverlappingTask);
+        assertEquals(-1, idOverlappingSubTask);
+    }
+
+    @Test
+    void shouldNotAddTaskWhenStartsDuringExistingTask() {
+        Duration treeMinutes = Duration.ofMinutes(3);
+        Duration foreMinutes = Duration.ofMinutes(4);
+        // Создаем и добавляем в менеджер задачу
+        Task task = new Task(1, TaskType.TASK, "Name Task"
+                , TaskProgress.NEW, "Description Task", timeToFirstTask, Duration.ofMinutes(3));
+        manager.addNewTask(task);
+        // Создаем и пытаемся добавить в наш менеджер задачу и подзадачу c временем начала на отрезке первой задачи
+        Task overlappingTask = new Task(2, TaskType.TASK, "Name Task"
+                , TaskProgress.NEW, "Description Task", timeToSecondTask, Duration.ofMinutes(4));
+        Epic epic = new Epic(3, TaskType.EPIC, "Name Epic 1", TaskProgress.NEW, "Des Epic 1");
+        SubTask overlappingSubtask = new SubTask(4, TaskType.SUBTASK, "Name SubTask"
+                , TaskProgress.NEW, "Des Subtask"
+                , epic.getTaskID(), timeToSecondTask, Duration.ofMinutes(4));
+        int idOverlappingTask = manager.addNewTask(overlappingTask);
+        manager.addNewEpicTask(epic);
+        int idOverlappingSubTask = manager.addNewSubTask(overlappingSubtask);
+
+        assertEquals(-1, idOverlappingTask);
+        assertEquals(-1, idOverlappingSubTask);
+    }
+
+    @Test
+    void shouldNotAddTaskWhenFullyOverlapsExistingTask() {
+        Duration tenMinutes = Duration.ofMinutes(10);
+        // Создаем и добавляем в менеджер задачу
+        Task task = new Task(1, TaskType.TASK, "Name Task"
+                , TaskProgress.NEW, "Description Task", timeToSecondTask, duration);
+        manager.addNewTask(task);
+        // Создаем и пытаемся добавить в наш менеджер задачу и подзадачу c временем полностью перекрывающим нашу задачу
+        Task overlappingTask = new Task(2, TaskType.TASK, "Name Task"
+                , TaskProgress.NEW, "Description Task", timeToFirstTask, tenMinutes);
+        Epic epic = new Epic(3, TaskType.EPIC, "Name Epic 1", TaskProgress.NEW, "Des Epic 1");
+        SubTask overlappingSubtask = new SubTask(4, TaskType.SUBTASK, "Name SubTask"
+                , TaskProgress.NEW, "Des Subtask"
+                , epic.getTaskID(), timeToFirstTask, tenMinutes);
+        int idOverlappingTask = manager.addNewTask(overlappingTask);
+        manager.addNewEpicTask(epic);
+        int idOverlappingSubTask = manager.addNewSubTask(overlappingSubtask);
+
+        assertEquals(-1, idOverlappingTask);
+        assertEquals(-1, idOverlappingSubTask);
+    }
+
+    @Test
+    void shouldNotAddTaskWhenIsFullyInsideExistingTask() {
+        Duration tenMinutes = Duration.ofMinutes(10);
+        // Создаем и добавляем в менеджер задачу
+        Task task = new Task(1, TaskType.TASK, "Name Task"
+                , TaskProgress.NEW, "Description Task", timeToFirstTask, tenMinutes);
+        manager.addNewTask(task);
+        // Создаем и пытаемся добавить в наш менеджер задачу и подзадачу c временем полностью находящиеся на отрезке первой
+        Task overlappingTask = new Task(2, TaskType.TASK, "Name Task"
+                , TaskProgress.NEW, "Description Task", timeToSecondTask, duration);
+        Epic epic = new Epic(3, TaskType.EPIC, "Name Epic 1", TaskProgress.NEW, "Des Epic 1");
+        SubTask overlappingSubtask = new SubTask(4, TaskType.SUBTASK, "Name SubTask"
+                , TaskProgress.NEW, "Des Subtask"
+                , epic.getTaskID(), timeToSecondTask, duration);
+        int idOverlappingTask = manager.addNewTask(overlappingTask);
+        manager.addNewEpicTask(epic);
+        int idOverlappingSubTask = manager.addNewSubTask(overlappingSubtask);
+
+        assertEquals(-1, idOverlappingTask);
+        assertEquals(-1, idOverlappingSubTask);
+    }
+
+    @Test
+    void shouldAddTaskWhenNoTimeOverlapWithExistingTask() {
+        // Создаем и добавляем в менеджер задачу
+        Task task = new Task(1, TaskType.TASK, "Name Task"
+                , TaskProgress.NEW, "Description Task", timeToFirstTask, duration);
+        manager.addNewTask(task);
+        // Создаем и пытаемся добавить в наш менеджер задачу и подзадачу идущие друг за другом
+        Task nextTimeTask = new Task(2, TaskType.TASK, "Name Task"
+                , TaskProgress.NEW, "Description Task", timeToSecondTask, duration);
+        Epic epic = new Epic(3, TaskType.EPIC, "Name Epic 1", TaskProgress.NEW, "Des Epic 1");
+        SubTask nextTimeSubTask = new SubTask(4, TaskType.SUBTASK, "Name SubTask"
+                , TaskProgress.NEW, "Des Subtask"
+                , epic.getTaskID(), timeToThirdTask, duration);
+        int idOverlappingTask = manager.addNewTask(nextTimeTask);
+        manager.addNewEpicTask(epic);
+        int idOverlappingSubTask = manager.addNewSubTask(nextTimeSubTask);
+
+        assertEquals(nextTimeTask.getTaskID(), idOverlappingTask);
+        assertEquals(nextTimeSubTask.getTaskID(), idOverlappingSubTask);
+    }
 }
 
