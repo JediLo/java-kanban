@@ -26,7 +26,6 @@ class ManagerSCVTest {
         String stringSCV = ManagerSCV.getSCVFromTasks(taskList);
         String stringResult = ManagerSCV.title + System.lineSeparator()
                 + "1,TASK,Name,IN_PROGRESS,description, ," + timeToTask.format(formatter) + "," + duration.toNanos();
-        ;
         Assertions.assertEquals(stringSCV, stringResult);
     }
 

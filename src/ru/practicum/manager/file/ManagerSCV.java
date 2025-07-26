@@ -5,7 +5,6 @@ import ru.practicum.model.*;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
 import java.util.List;
 
 public class ManagerSCV {
@@ -46,12 +45,11 @@ public class ManagerSCV {
             } else {
                 sb.append(" ");
             }
-            ;
         }
         return sb.toString();
     }
 
-    public static <T> Task getTaskFromString(String line) {
+    public static  Task getTaskFromString(String line) {
         if (line == null || line.equals(title)) {
             return null;
         }
@@ -72,8 +70,8 @@ public class ManagerSCV {
         return switch (taskType) {
             case TASK -> new Task(id, taskType, name, taskProgress, description, startTime, duration);
             case EPIC -> new Epic(id, taskType, name, taskProgress, description);
-            case SUBTASK -> new SubTask(id, taskType, name, taskProgress, description, Integer.parseInt(elements[5])
-                    , startTime, duration);
+            case SUBTASK -> new SubTask(id, taskType, name, taskProgress, description, Integer.parseInt(elements[5]),
+                    startTime, duration);
         };
     }
 }

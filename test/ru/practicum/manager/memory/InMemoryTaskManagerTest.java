@@ -153,9 +153,8 @@ class InMemoryTaskManagerTest {
         SubTask subTask = new SubTask(2, TaskType.SUBTASK, "Name SubTask"
                 , TaskProgress.NEW, "Description SubTask", idEpic, timeToFirstTask, duration);
         int idSubTask = manager.addNewSubTask(subTask);
-        SubTask updateSubTask = new SubTask(idSubTask, TaskType.SUBTASK, "Name New SubTask"
+        return new SubTask(idSubTask, TaskType.SUBTASK, "Name New SubTask"
                 , TaskProgress.NEW, "Description New SubTask", idEpic, timeToSecondTask, duration);
-        return updateSubTask;
     }
 
     @Test
@@ -334,18 +333,18 @@ class InMemoryTaskManagerTest {
     @Test
     void shouldNotAddTaskWhenStartsDuringExistingTask() {
         Duration treeMinutes = Duration.ofMinutes(3);
-        Duration foreMinutes = Duration.ofMinutes(4);
+        Duration fourMinutes = Duration.ofMinutes(4);
         // Создаем и добавляем в менеджер задачу
         Task task = new Task(1, TaskType.TASK, "Name Task"
-                , TaskProgress.NEW, "Description Task", timeToFirstTask, Duration.ofMinutes(3));
+                , TaskProgress.NEW, "Description Task", timeToFirstTask, treeMinutes);
         manager.addNewTask(task);
         // Создаем и пытаемся добавить в наш менеджер задачу и подзадачу c временем начала на отрезке первой задачи
         Task overlappingTask = new Task(2, TaskType.TASK, "Name Task"
-                , TaskProgress.NEW, "Description Task", timeToSecondTask, Duration.ofMinutes(4));
+                , TaskProgress.NEW, "Description Task", timeToSecondTask, fourMinutes);
         Epic epic = new Epic(3, TaskType.EPIC, "Name Epic 1", TaskProgress.NEW, "Des Epic 1");
         SubTask overlappingSubtask = new SubTask(4, TaskType.SUBTASK, "Name SubTask"
                 , TaskProgress.NEW, "Des Subtask"
-                , epic.getTaskID(), timeToSecondTask, Duration.ofMinutes(4));
+                , epic.getTaskID(), timeToSecondTask, fourMinutes);
         int idOverlappingTask = manager.addNewTask(overlappingTask);
         manager.addNewEpicTask(epic);
         int idOverlappingSubTask = manager.addNewSubTask(overlappingSubtask);
