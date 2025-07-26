@@ -1,17 +1,19 @@
 package ru.practicum.manager.history;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.practicum.manager.general.Managers;
-import ru.practicum.model.Epic;
-import ru.practicum.model.SubTask;
-import ru.practicum.model.Task;
-import ru.practicum.model.TaskProgress;
+import ru.practicum.model.*;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 class InMemoryHistoryManagerTest {
     private HistoryManager manager;
+    LocalDateTime timeToFirstTask = LocalDateTime.now();
+    LocalDateTime timeToSecondTask = timeToFirstTask.plusMinutes(2);
+    Duration duration = Duration.ofMinutes(1);
 
     @BeforeEach
     void setup() {
@@ -20,7 +22,8 @@ class InMemoryHistoryManagerTest {
 
     @Test
     void shouldSaveOldVersionTask() {
-        Task task = new Task("Name", "Des");
+        Task task = new Task(1, TaskType.TASK, "Name"
+                , TaskProgress.NEW, "Des", timeToFirstTask, duration);
         manager.add(task);
         task.setName("New Name");
         task.setDescription("New Des");
@@ -32,7 +35,8 @@ class InMemoryHistoryManagerTest {
 
     @Test
     void shouldSaveOldVersionEpic() {
-        Epic epic = new Epic("Name", "Des");
+        Epic epic = new Epic(1, TaskType.EPIC, "Name"
+                , TaskProgress.NEW, "Des");
         manager.add(epic);
         epic.setName("New Name");
         epic.setDescription("New Des");
@@ -43,7 +47,8 @@ class InMemoryHistoryManagerTest {
 
     @Test
     void shouldSaveOldVersionSubTask() {
-        SubTask subTask = new SubTask("Name", "Des", 0);
+        SubTask subTask = new SubTask(1, TaskType.SUBTASK, "Name"
+                , TaskProgress.NEW, "Des", 0, timeToFirstTask, duration);
         manager.add(subTask);
         subTask.setName("New Name");
         subTask.setDescription("New Des");
@@ -55,11 +60,11 @@ class InMemoryHistoryManagerTest {
 
     @Test
     void shouldBeTaskUpdate() {
-        Task task = new Task("Name", "Des");
-        task.setTaskID(1);
+        Task task = new Task(1, TaskType.TASK, "Name"
+                , TaskProgress.NEW, "Des", timeToFirstTask, duration);
         manager.add(task);
-        Task task2 = new Task("Name task 2", "Des task 2");
-        task2.setTaskID(2);
+        Task task2 = new Task(2, TaskType.TASK, "Name task 2"
+                , TaskProgress.NEW, "Des task 2", timeToSecondTask, duration);
         manager.add(task2);
         // Сначала первой в истории должна быть первая задача.
         Assertions.assertEquals(task, manager.getHistory().getFirst());
