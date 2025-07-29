@@ -5,8 +5,6 @@ import org.junit.jupiter.api.Test;
 import ru.practicum.exceptons.EpicNotFoundExceptions;
 import ru.practicum.exceptons.ManagerSaveException;
 import ru.practicum.manager.TaskManagerTest;
-import ru.practicum.manager.general.TaskManager;
-import ru.practicum.manager.memory.InMemoryTaskManager;
 import ru.practicum.model.*;
 
 import java.io.File;
@@ -108,6 +106,7 @@ class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
         Assertions.assertEquals(sb.toString(), Files.readString(tempFile.toPath()));
 
     }
+
     @Test
     void shouldThrowExceptionWhenSubTaskReferencesMissingEpic() {
         SubTask subTask = new SubTask(1, TaskType.SUBTASK, "Name SubTask"
@@ -117,6 +116,7 @@ class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
             manager.loadTaskFromString(subTask);
         });
     }
+
     @Test
     void shouldThrowManagerSaveExceptionWhenFileIsNotWritable() {
         String content = "Test content";
@@ -126,7 +126,8 @@ class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
             manager.saveToSCV(content, invalidFile);
         });
     }
-        @Test
+
+    @Test
     void shouldLoadMultipleTasksFromFile() throws IOException {
         // Подготавливаем Tasks
         Task task = new Task(1, TaskType.TASK, "Name task", TaskProgress.NEW,
