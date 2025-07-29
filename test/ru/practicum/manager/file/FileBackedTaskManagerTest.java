@@ -2,6 +2,11 @@ package ru.practicum.manager.file;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import ru.practicum.exceptons.EpicNotFoundExceptions;
+import ru.practicum.exceptons.ManagerSaveException;
+import ru.practicum.manager.TaskManagerTest;
+import ru.practicum.manager.general.TaskManager;
+import ru.practicum.manager.memory.InMemoryTaskManager;
 import ru.practicum.model.*;
 
 import java.io.File;
@@ -10,9 +15,9 @@ import java.nio.file.Files;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 
-class FileBackedTaskManagerTest {
+
+class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
     LocalDateTime timeToFirstTask = LocalDateTime.now();
     LocalDateTime timeToSecondTask = timeToFirstTask.plusMinutes(2);
     Duration duration = Duration.ofMinutes(1);
@@ -21,7 +26,6 @@ class FileBackedTaskManagerTest {
     @Test
     void shouldBeloadFromFile() throws IOException {
         // Подготавливаем Task
-
         Task task = new Task(1, TaskType.TASK, "Name", TaskProgress.NEW,
                 "description", timeToFirstTask, duration);
         // Формируем строку, которая должна быть в файле
@@ -34,12 +38,10 @@ class FileBackedTaskManagerTest {
         Files.writeString(tempFile.toPath(), line);
         // Создаем менеджер с подготовленным файлом
         FileBackedTaskManager fileBackedTaskManager = FileBackedTaskManager.loadFromFile(tempFile);
-
         // Получаем Task из нашего менеджера
         Task taskFromFile = fileBackedTaskManager.getTask(task.getTaskID());
-
         equalsTasks(task, taskFromFile);
-        equalsTimeTask(task, taskFromFile);
+
     }
 
 
@@ -68,7 +70,6 @@ class FileBackedTaskManagerTest {
         File tempFile = File.createTempFile("tasks", ".csv");
         tempFile.deleteOnExit();
         FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager(tempFile);
-
         Assertions.assertTrue(fileBackedTaskManager.getAllTask().isEmpty());
         Assertions.assertTrue(fileBackedTaskManager.getAllSubTask().isEmpty());
         Assertions.assertTrue(fileBackedTaskManager.getAllEpic().isEmpty());
@@ -107,8 +108,25 @@ class FileBackedTaskManagerTest {
         Assertions.assertEquals(sb.toString(), Files.readString(tempFile.toPath()));
 
     }
-
     @Test
+    void shouldThrowExceptionWhenSubTaskReferencesMissingEpic() {
+        SubTask subTask = new SubTask(1, TaskType.SUBTASK, "Name SubTask"
+                , TaskProgress.NEW, "description SubTask", 2,
+                timeToSecondTask, duration);
+        Assertions.assertThrows(EpicNotFoundExceptions.class, () -> {
+            manager.loadTaskFromString(subTask);
+        });
+    }
+    @Test
+    void shouldThrowManagerSaveExceptionWhenFileIsNotWritable() {
+        String content = "Test content";
+        File invalidFile = new File("/root/error.csv");
+
+        Assertions.assertThrows(ManagerSaveException.class, () -> {
+            manager.saveToSCV(content, invalidFile);
+        });
+    }
+        @Test
     void shouldLoadMultipleTasksFromFile() throws IOException {
         // Подготавливаем Tasks
         Task task = new Task(1, TaskType.TASK, "Name task", TaskProgress.NEW,
@@ -117,6 +135,8 @@ class FileBackedTaskManagerTest {
         SubTask subTask = new SubTask(3, TaskType.SUBTASK, "Name SubTask"
                 , TaskProgress.NEW, "description SubTask", epic.getTaskID(), timeToSecondTask, duration);
         epic.addSubTask(subTask);
+        // Обновим время у Epic
+        epic.updateTimesEpic(timeToSecondTask, duration, timeToSecondTask.plus(duration));
         // Формируем строку, которая должна быть в файле
         StringBuilder sb = new StringBuilder();
         sb.append(ManagerSCV.title).append(System.lineSeparator());
@@ -140,10 +160,9 @@ class FileBackedTaskManagerTest {
         Epic epicFromManager = fileBackedTaskManager.getEpicTask(epic.getTaskID());
         SubTask subTaskFromManager = fileBackedTaskManager.getSubTask(subTask.getTaskID());
         equalsTasks(task, taskFromManager);
-        equalsTimeTask(task, taskFromManager);
         equalsEpic(epic, epicFromManager);
         equalsSubTasks(subTask, subTaskFromManager);
-        equalsTimeTask(subTask, subTaskFromManager);
+
 
     }
 
@@ -196,26 +215,11 @@ class FileBackedTaskManagerTest {
         Assertions.assertEquals(lineUpdate, Files.readString(tempFile.toPath()));
     }
 
-    private static void equalsTasks(Task expected, Task actual) {
-        Assertions.assertEquals(expected.getTaskID(), actual.getTaskID());
-        Assertions.assertEquals(expected.getType(), actual.getType());
-        Assertions.assertEquals(expected.getName(), actual.getName());
-        Assertions.assertEquals(expected.getTaskProgress(), actual.getTaskProgress());
-        Assertions.assertEquals(expected.getDescription(), actual.getDescription());
-    }
 
-    private static void equalsSubTasks(SubTask expected, SubTask actual) {
-        equalsTasks(expected, actual);
-        Assertions.assertEquals(expected.getEpicTaskID(), actual.getEpicTaskID());
-    }
-
-    private static void equalsEpic(Epic expected, Epic actual) {
-        equalsTasks(expected, actual);
-        Assertions.assertEquals(expected.getSubTasksID(), actual.getSubTasksID());
-    }
-
-    private static void equalsTimeTask(Task expected, Task actual) {
-        Assertions.assertEquals(expected.getStartTime().truncatedTo(ChronoUnit.MINUTES), actual.getStartTime());
-        Assertions.assertEquals(expected.getDuration(), actual.getDuration());
+    @Override
+    protected FileBackedTaskManager createManager() throws IOException {
+        File tempFile = File.createTempFile("tasks", ".csv");
+        tempFile.deleteOnExit();
+        return new FileBackedTaskManager(tempFile);
     }
 }

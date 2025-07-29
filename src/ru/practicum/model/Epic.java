@@ -2,6 +2,7 @@ package ru.practicum.model;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,9 +37,12 @@ public class Epic extends Task {
     }
 
     public void updateTimesEpic(LocalDateTime startTime, Duration duration, LocalDateTime endTime) {
-        this.startTime = startTime;
+        if (startTime != null && endTime != null) {
+            this.startTime = startTime.truncatedTo(ChronoUnit.MINUTES);
+            this.endTime = endTime.truncatedTo(ChronoUnit.MINUTES);
+        }
         this.duration = duration;
-        this.endTime = endTime;
+
     }
 
     public void removeSubTask(SubTask subTask) {

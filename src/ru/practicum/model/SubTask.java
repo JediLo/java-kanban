@@ -21,14 +21,14 @@ public class SubTask extends Task {
         return epicTaskID;
     }
 
+    public void setEpicTaskID(int epicTaskID) {
+        this.epicTaskID = epicTaskID;
+    }
+
     @Override
     public String toString() {
         return "SubTask{" + super.toString() +
                 "EpicTaskID=" + epicTaskID +
                 "} ";
-    }
-
-    public void setEpicTaskID(int epicTaskID) {
-        this.epicTaskID = epicTaskID;
     }
 }

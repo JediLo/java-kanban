@@ -2,6 +2,7 @@ package ru.practicum.model;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
 public class Task {
@@ -19,7 +20,9 @@ public class Task {
         this.name = name;
         this.taskProgress = taskProgress;
         this.description = description;
-        this.startTime = startTime;
+        if (startTime != null) {
+            this.startTime = startTime.truncatedTo(ChronoUnit.MINUTES);
+        }
         this.duration = duration;
     }
 
@@ -34,15 +37,9 @@ public class Task {
         this.taskProgress = task.taskProgress;
         this.taskType = task.taskType;
         this.duration = task.duration;
-        this.startTime = task.startTime;
-    }
-
-    public void setTaskID(int taskID) {
-        this.taskID = taskID;
-    }
-
-    public void setTaskProgress(TaskProgress taskProgress) {
-        this.taskProgress = taskProgress;
+        if (task.startTime != null) {
+            this.startTime = task.startTime.truncatedTo(ChronoUnit.MINUTES);
+        }
     }
 
     @Override
@@ -59,6 +56,10 @@ public class Task {
 
     public int getTaskID() {
         return taskID;
+    }
+
+    public void setTaskID(int taskID) {
+        this.taskID = taskID;
     }
 
     public LocalDateTime getEndTime() {
@@ -91,16 +92,20 @@ public class Task {
         return taskProgress;
     }
 
+    public void setTaskProgress(TaskProgress taskProgress) {
+        this.taskProgress = taskProgress;
+    }
+
     public String getName() {
         return name;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
     public void setDescription(String description) {

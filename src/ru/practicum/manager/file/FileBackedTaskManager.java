@@ -41,7 +41,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         return manager;
     }
 
-    private void saveToSCV(String toSCV, File file) {
+    protected void saveToSCV(String toSCV, File file) {
         try {
             Files.writeString(Path.of(file.getPath()), toSCV);
         } catch (IOException e) {
@@ -135,7 +135,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         save();
     }
 
-    private void loadTaskFromString(Task task) {
+    protected void loadTaskFromString(Task task) {
         switch (task) {
             case null -> {
                 return;
@@ -147,10 +147,19 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 }
                 epic.addSubTask(subtaskToMap);
                 subTasks.put(subtaskToMap.getTaskID(), subtaskToMap);
+                checkAndReplaceEpicTaskTime(epic);
 
             }
             case Epic epicToMap -> epics.put(epicToMap.getTaskID(), epicToMap);
-            default -> tasks.put(task.getTaskID(), task);
+            default -> {
+                tasks.put(task.getTaskID(), task);
+
+                if (!checkTheCrossingTimeTask(task)) {
+                    sortedTasksToTime.add(task);
+                }
+            }
+
+
         }
         if (task.getTaskID() > countTasks) {
             countTasks = task.getTaskID();

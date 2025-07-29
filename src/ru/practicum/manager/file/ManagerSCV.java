@@ -49,7 +49,7 @@ public class ManagerSCV {
         return sb.toString();
     }
 
-    public static  Task getTaskFromString(String line) {
+    public static Task getTaskFromString(String line) {
         if (line == null || line.equals(title)) {
             return null;
         }

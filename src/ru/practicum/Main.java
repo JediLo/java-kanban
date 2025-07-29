@@ -9,14 +9,14 @@ import java.time.LocalDateTime;
 
 public class Main {
     private static final TaskManager taskManager = Managers.getDefault();
-    private static int idLastTaskAdd;
-    private static int idLastEpicAdd;
-    private static int idLastSubTaskAdd;
     private static final LocalDateTime timeToFirstTask = LocalDateTime.now();
     private static final LocalDateTime timeToSecondTask = timeToFirstTask.plusMinutes(2);
     private static final LocalDateTime timeToThirdTask = timeToSecondTask.plusMinutes(2);
     private static final LocalDateTime timeToFourTask = timeToThirdTask.plusMinutes(2);
     private static final Duration duration = Duration.ofMinutes(1);
+    private static int idLastTaskAdd;
+    private static int idLastEpicAdd;
+    private static int idLastSubTaskAdd;
     private static int countID = 0;
 
     public static void main(String[] args) {
