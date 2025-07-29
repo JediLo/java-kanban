@@ -131,9 +131,8 @@ public class InMemoryTaskManager implements TaskManager {
             return;
         }
         if (epics.get(epic.getTaskID()) != null) {
-            Epic newEpic = new Epic(epic);
-            epic.setName(newEpic.getName());
-            epic.setDescription(newEpic.getDescription());
+            epic.setName(epic.getName());
+            epic.setDescription(epic.getDescription());
         }
     }
 
@@ -261,8 +260,7 @@ public class InMemoryTaskManager implements TaskManager {
         Epic epic = epics.get(id);
         if (epic != null) {
             subTasksFromEpic = epic.getSubTasksID().stream()
-                    .mapToInt(idSubTask -> idSubTask)
-                    .mapToObj(subTasks::get)
+                    .map(subTasks::get)
                     .collect(Collectors.toList());
         }
         return subTasksFromEpic;

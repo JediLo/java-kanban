@@ -150,20 +150,21 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         // Создаем Задачи
         Epic epic = new Epic(1, TaskType.EPIC, "Name Epic",
                 TaskProgress.NEW, "Description Epic");
-        SubTask subTask = new SubTask(2,TaskType.SUBTASK, "Name subTask",
+        SubTask subTask = new SubTask(2, TaskType.SUBTASK, "Name subTask",
                 TaskProgress.NEW, "Description subTask", epic.getTaskID(),
                 now, oneMinutes);
         // Добавляем в менеджер нашу задачу и подзадачу
         manager.addNewEpicTask(epic);
         manager.addNewSubTask(subTask);
         // Обновляем время у созданной вручную задачи
-        epic.updateTimesEpic(now, oneMinutes,now.plus(oneMinutes));
+        epic.updateTimesEpic(now, oneMinutes, now.plus(oneMinutes));
         // Получаем задачу из менеджера по ID
         Epic savedEpic = manager.getEpicTask(epic.getTaskID());
         // Сравниваем созданную нами задачу и полученную из менеджера по всем полям
 
         equalsEpic(epic, savedEpic);
     }
+
     @Test
     void shouldAddSubtaskToEpic() {
         LocalDateTime now = LocalDateTime.now();
@@ -171,7 +172,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         // Создаем Задачи
         Epic epic = new Epic(1, TaskType.EPIC, "Name Epic",
                 TaskProgress.NEW, "Description Epic");
-        SubTask subTask = new SubTask(2,TaskType.SUBTASK, "Name subTask",
+        SubTask subTask = new SubTask(2, TaskType.SUBTASK, "Name subTask",
                 TaskProgress.NEW, "Description subTask", epic.getTaskID(),
                 now, oneMinutes);
         // Добавляем в менеджер нашу задачу и подзадачу
@@ -190,10 +191,10 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         // Создаем задачи
         Epic epic = new Epic(1, TaskType.EPIC, "Name Epic",
                 TaskProgress.NEW, "Description Epic");
-        SubTask firstSubTask = new SubTask(2,TaskType.SUBTASK, "Name firstSubTask",
+        SubTask firstSubTask = new SubTask(2, TaskType.SUBTASK, "Name firstSubTask",
                 TaskProgress.IN_PROGRESS, "Description firstSubTask", epic.getTaskID(),
                 now, oneMinutes);
-        SubTask secondSubTask = new SubTask(3,TaskType.SUBTASK, "Name secondSubTask",
+        SubTask secondSubTask = new SubTask(3, TaskType.SUBTASK, "Name secondSubTask",
                 TaskProgress.NEW, "Description secondSubTask", epic.getTaskID(),
                 nowPlusOneMinutes, oneMinutes);
         // Добавляем в менеджер наши задачи
@@ -201,13 +202,13 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         manager.addNewSubTask(firstSubTask);
         manager.addNewSubTask(secondSubTask);
         //Создаем новую задачу с измененными полями, кроме ID Имитация редактирования всех доступных пользователю полей
-        Epic updateEpic= new Epic(1, TaskType.EPIC, "Name Update Epic",
+        Epic updateEpic = new Epic(1, TaskType.EPIC, "Name Update Epic",
                 TaskProgress.NEW, "Description Update Epic");
 
         // Обновляем в менеджере нашу задачу
         manager.updateEpic(updateEpic);
         //
-        updateEpic.updateTimesEpic(now,oneMinutes.plus(oneMinutes), now.plus(oneMinutes.plus(oneMinutes)));
+        updateEpic.updateTimesEpic(now, oneMinutes.plus(oneMinutes), now.plus(oneMinutes.plus(oneMinutes)));
         updateEpic.addSubTask(firstSubTask);
         updateEpic.addSubTask(secondSubTask);
         // Получаем из менеджера обновленную задачу
@@ -251,17 +252,17 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         // Epic с 1 подзадачей
         Epic firstEpic = new Epic(1, TaskType.EPIC, "Name firstEpic",
                 TaskProgress.NEW, "Description firstEpic");
-        SubTask subTaskToFirstEpic = new SubTask(2,TaskType.SUBTASK, "Name subTaskToFirstEpic",
+        SubTask subTaskToFirstEpic = new SubTask(2, TaskType.SUBTASK, "Name subTaskToFirstEpic",
                 TaskProgress.NEW, "Description subTaskToFirstEpic", firstEpic.getTaskID(),
                 now, oneMinutes);
         // Epic с 2 подзадачами
         Epic secondEpic = new Epic(3, TaskType.EPIC, "Name secondEpic",
                 TaskProgress.NEW, "Description secondEpic");
-        SubTask firstSubTaskToSecondEpic = new SubTask(4,TaskType.SUBTASK,
+        SubTask firstSubTaskToSecondEpic = new SubTask(4, TaskType.SUBTASK,
                 "Name firstSubTaskToSecondEpic", TaskProgress.NEW,
                 "Description firstSubTaskToSecondEpic", secondEpic.getTaskID(),
                 nowPlusOneMinutes, oneMinutes);
-        SubTask secondSubTaskToSecondEpic = new SubTask(5,TaskType.SUBTASK,
+        SubTask secondSubTaskToSecondEpic = new SubTask(5, TaskType.SUBTASK,
                 "Name secondSubTaskToSecondEpic", TaskProgress.NEW,
                 "Description secondSubTaskToSecondEpic", secondEpic.getTaskID(),
                 nowPlusTwoMinutes, oneMinutes);
@@ -279,8 +280,8 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
         manager.addNewEpicTask(thirdEpic);
         //Обновляем время у наших Epics
-        firstEpic.updateTimesEpic(now,oneMinutes,now.plus(oneMinutes));
-        secondEpic.updateTimesEpic(nowPlusOneMinutes,oneMinutes.plus(oneMinutes),nowPlusTwoMinutes.plus(oneMinutes));
+        firstEpic.updateTimesEpic(now, oneMinutes, now.plus(oneMinutes));
+        secondEpic.updateTimesEpic(nowPlusOneMinutes, oneMinutes.plus(oneMinutes), nowPlusTwoMinutes.plus(oneMinutes));
         // Получаем список задач из нашего менеджера
         List<Epic> savedEpics = manager.getAllEpic();
         // Сравниваем созданные нами задачи с теми, которые получены из менеджера
@@ -312,7 +313,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void shouldBeTaskProgressWhenUpdateSubtask(){
+    void shouldBeTaskProgressWhenUpdateSubtask() {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime nowPlusOneMinutes = now.plusMinutes(1);
         LocalDateTime nowPlusTwoMinutes = now.plusMinutes(2);
@@ -320,17 +321,17 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         // Epic с 1 подзадачей DONE
         Epic firstEpic = new Epic(1, TaskType.EPIC, "Name firstEpic",
                 TaskProgress.IN_PROGRESS, "Description firstEpic");
-        SubTask subTaskToFirstEpic = new SubTask(2,TaskType.SUBTASK, "Name subTaskToFirstEpic",
+        SubTask subTaskToFirstEpic = new SubTask(2, TaskType.SUBTASK, "Name subTaskToFirstEpic",
                 TaskProgress.DONE, "Description subTaskToFirstEpic", firstEpic.getTaskID(),
                 now, oneMinutes);
         // Epic с 2 подзадачами DONE
         Epic secondEpic = new Epic(3, TaskType.EPIC, "Name secondEpic",
                 TaskProgress.DONE, "Description secondEpic");
-        SubTask firstSubTaskToSecondEpic = new SubTask(4,TaskType.SUBTASK,
+        SubTask firstSubTaskToSecondEpic = new SubTask(4, TaskType.SUBTASK,
                 "Name firstSubTaskToSecondEpic", TaskProgress.DONE,
                 "Description firstSubTaskToSecondEpic", secondEpic.getTaskID(),
                 nowPlusOneMinutes, oneMinutes);
-        SubTask secondSubTaskToSecondEpic = new SubTask(5,TaskType.SUBTASK,
+        SubTask secondSubTaskToSecondEpic = new SubTask(5, TaskType.SUBTASK,
                 "Name secondSubTaskToSecondEpic", TaskProgress.DONE,
                 "Description secondSubTaskToSecondEpic", secondEpic.getTaskID(),
                 nowPlusTwoMinutes, oneMinutes);
@@ -353,7 +354,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void shouldBeTaskProgressInProgressWhenUpdateSubtask(){
+    void shouldBeTaskProgressInProgressWhenUpdateSubtask() {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime nowPlusOneMinutes = now.plusMinutes(1);
         LocalDateTime nowPlusTwoMinutes = now.plusMinutes(2);
@@ -365,39 +366,39 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         // Epic с 1 подзадачей IN_PROGRESS
         Epic firstEpic = new Epic(1, TaskType.EPIC, "Name firstEpic",
                 TaskProgress.NEW, "Description firstEpic");
-        SubTask subTaskToFirstEpic = new SubTask(2,TaskType.SUBTASK, "Name subTaskToFirstEpic",
+        SubTask subTaskToFirstEpic = new SubTask(2, TaskType.SUBTASK, "Name subTaskToFirstEpic",
                 TaskProgress.IN_PROGRESS, "Description subTaskToFirstEpic", firstEpic.getTaskID(),
                 now, oneMinutes);
         // Epic с 2 подзадачами где 1 NEW вторая IN_PROGRESS
         Epic secondEpic = new Epic(3, TaskType.EPIC, "Name secondEpic",
                 TaskProgress.NEW, "Description secondEpic");
-        SubTask firstSubTaskToSecondEpic = new SubTask(4,TaskType.SUBTASK,
+        SubTask firstSubTaskToSecondEpic = new SubTask(4, TaskType.SUBTASK,
                 "Name firstSubTaskToSecondEpic", TaskProgress.NEW,
                 "Description firstSubTaskToSecondEpic", secondEpic.getTaskID(),
                 nowPlusOneMinutes, oneMinutes);
-        SubTask secondSubTaskToSecondEpic = new SubTask(5,TaskType.SUBTASK,
+        SubTask secondSubTaskToSecondEpic = new SubTask(5, TaskType.SUBTASK,
                 "Name secondSubTaskToSecondEpic", TaskProgress.IN_PROGRESS,
                 "Description secondSubTaskToSecondEpic", secondEpic.getTaskID(),
                 nowPlusTwoMinutes, oneMinutes);
         // Epic с 2 подзадачами где 1 NEW вторая DONE
         Epic thirdEpic = new Epic(6, TaskType.EPIC, "Name thirdEpic",
                 TaskProgress.NEW, "Description thirdEpic");
-        SubTask firstSubTaskToThirdEpic = new SubTask(7,TaskType.SUBTASK,
+        SubTask firstSubTaskToThirdEpic = new SubTask(7, TaskType.SUBTASK,
                 "Name firstSubTaskToThirdEpic", TaskProgress.DONE,
                 "Description firstSubTaskToThirdEpic", thirdEpic.getTaskID(),
                 nowPlusThreeMinutes, oneMinutes);
-        SubTask secondSubTaskToThirdEpic = new SubTask(8,TaskType.SUBTASK,
+        SubTask secondSubTaskToThirdEpic = new SubTask(8, TaskType.SUBTASK,
                 "Name secondSubTaskToThirdEpic", TaskProgress.NEW,
                 "Description secondSubTaskToThirdEpic", thirdEpic.getTaskID(),
                 nowPlusFourMinutes, oneMinutes);
         // Epic с 2 подзадачами где 1 DONE вторая IN_PROGRESS
         Epic fourEpic = new Epic(9, TaskType.EPIC, "Name fourEpic",
                 TaskProgress.NEW, "Description fourEpic");
-        SubTask firstSubTaskToFourEpic = new SubTask(10,TaskType.SUBTASK,
+        SubTask firstSubTaskToFourEpic = new SubTask(10, TaskType.SUBTASK,
                 "Name firstSubTaskToFourEpic", TaskProgress.DONE,
                 "Description firstSubTaskToFourEpic", fourEpic.getTaskID(),
                 nowPlusFiveMinutes, oneMinutes);
-        SubTask secondSubTaskToFourEpic = new SubTask(11,TaskType.SUBTASK,
+        SubTask secondSubTaskToFourEpic = new SubTask(11, TaskType.SUBTASK,
                 "Name secondSubTaskToFourEpic", TaskProgress.IN_PROGRESS,
                 "Description secondSubTaskToFourEpic", fourEpic.getTaskID(),
                 nowPlusSixMinutes, oneMinutes);
@@ -658,6 +659,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         equalsTasks(expected, actual);
         Assertions.assertEquals(expected.getSubTasksID(), actual.getSubTasksID());
     }
+
     @Test
     void shouldBeRemoveFromHistoryWhenRemoveTask() {
         LocalDateTime now = LocalDateTime.now();
@@ -680,6 +682,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals(sizeHistoryAfterRemove, manager.getHistory().size());
 
     }
+
     @Test
     void shouldBeRemoveFromHistoryWhenRemoveEpic() {
         Epic epic1 = new Epic(1, TaskType.EPIC, "Name Epic 1"
@@ -698,6 +701,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         int sizeHistoryAfterRemove = 1;
         assertEquals(sizeHistoryAfterRemove, manager.getHistory().size());
     }
+
     @Test
     void shouldBeRemoveFromHistoryWhenRemoveSubTask() {
         LocalDateTime now = LocalDateTime.now();

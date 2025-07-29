@@ -13,6 +13,8 @@ import java.nio.file.Files;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 
 class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
@@ -163,6 +165,74 @@ class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
         equalsTasks(task, taskFromManager);
         equalsEpic(epic, epicFromManager);
         equalsSubTasks(subTask, subTaskFromManager);
+
+
+    }
+
+    @Test
+    void shouldLoadPrioritizedTasksFromFile() throws IOException {
+        LocalDateTime now = LocalDateTime.now();
+        Duration oneMinutes = Duration.ofMinutes(1);
+        LocalDateTime plusOneMinutes = now.plusMinutes(1);
+        LocalDateTime plusTwoMinutes = now.plusMinutes(2);
+        LocalDateTime plusThreeMinutes = now.plusMinutes(3);
+        LocalDateTime plusFourMinutes = now.plusMinutes(4);
+        LocalDateTime plusFiveMinutes = now.plusMinutes(5);
+        // Создаем разные задачи
+        Task firstTaskPlusOneMinutes = new Task(1, TaskType.TASK,
+                "Name firstTaskPlusOneMinutes",
+                TaskProgress.NEW, "Description firstTaskPlusOneMinutes",
+                plusOneMinutes, oneMinutes);
+        Task secondTaskNow = new Task(2, TaskType.TASK, "Name secondTaskNow",
+                TaskProgress.NEW, "Description secondTaskNow",
+                now, oneMinutes);
+        Task thirdTaskPlusThreeMinutes = new Task(3, TaskType.TASK,
+                "Name thirdTaskPlusThreeMinutes",
+                TaskProgress.NEW, "Description thirdTaskPlusThreeMinutes",
+                plusThreeMinutes, oneMinutes);
+        Epic epic = new Epic(4, TaskType.EPIC, "Name Epic",
+                TaskProgress.NEW, "Description Epic");
+        SubTask firstSubTaskPlusFiveMinutes = new SubTask(5, TaskType.SUBTASK,
+                "Name firstSubTaskPlusFiveMinutes",
+                TaskProgress.NEW, "Description firstSubTaskPlusFiveMinutes", epic.getTaskID(),
+                plusFiveMinutes, oneMinutes);
+        SubTask secondSubTaskPlusFourMinutes = new SubTask(6, TaskType.SUBTASK,
+                "Name secondSubTaskPlusFourMinutes",
+                TaskProgress.NEW, "Description secondSubTaskPlusFourMinutes", epic.getTaskID(),
+                plusFourMinutes, oneMinutes);
+        SubTask thirdSubTaskPlusTwoMinutes = new SubTask(7, TaskType.SUBTASK,
+                "Name thirdSubTaskPlusTwoMinutes",
+                TaskProgress.NEW, "Description thirdSubTaskPlusTwoMinutes", epic.getTaskID(),
+                plusTwoMinutes, oneMinutes);
+        // Создаем строку, для записи в файл
+        List<Task> tasksToSCV = new ArrayList<>();
+        tasksToSCV.add(firstTaskPlusOneMinutes);
+        tasksToSCV.add(secondTaskNow);
+        tasksToSCV.add(thirdTaskPlusThreeMinutes);
+        tasksToSCV.add(epic);
+        tasksToSCV.add(firstSubTaskPlusFiveMinutes);
+        tasksToSCV.add(secondSubTaskPlusFourMinutes);
+        tasksToSCV.add(thirdSubTaskPlusTwoMinutes);
+
+        String stringSCV = ManagerSCV.getSCVFromTasks(tasksToSCV);
+        // Создаем файл
+        File tempFile = File.createTempFile("tasks", ".csv");
+        tempFile.deleteOnExit();
+        // Записываем подготовленную строку в файл
+        Files.writeString(tempFile.toPath(), stringSCV);
+        // Создаем менеджер с подготовленным файлом
+        FileBackedTaskManager fileBackedTaskManager = FileBackedTaskManager.loadFromFile(tempFile);
+        // Получаем PrioritizedTasks из нашего менеджера
+        List<Task> sortedSavedTasks = fileBackedTaskManager.getPrioritizedTasks();
+
+
+        // Сравниваем задачи от самой ранней к самой поздней
+        equalsTasks(sortedSavedTasks.getFirst(), secondTaskNow);
+        equalsTasks(sortedSavedTasks.get(1), firstTaskPlusOneMinutes);
+        equalsTasks(sortedSavedTasks.get(2), thirdSubTaskPlusTwoMinutes);
+        equalsTasks(sortedSavedTasks.get(3), thirdTaskPlusThreeMinutes);
+        equalsTasks(sortedSavedTasks.get(4), secondSubTaskPlusFourMinutes);
+        equalsTasks(sortedSavedTasks.getLast(), firstSubTaskPlusFiveMinutes);
 
 
     }

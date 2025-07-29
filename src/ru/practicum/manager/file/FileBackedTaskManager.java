@@ -148,18 +148,14 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 epic.addSubTask(subtaskToMap);
                 subTasks.put(subtaskToMap.getTaskID(), subtaskToMap);
                 checkAndReplaceEpicTaskTime(epic);
+                sortedTasksToTime.add(subtaskToMap);
 
             }
             case Epic epicToMap -> epics.put(epicToMap.getTaskID(), epicToMap);
             default -> {
                 tasks.put(task.getTaskID(), task);
-
-                if (!checkTheCrossingTimeTask(task)) {
-                    sortedTasksToTime.add(task);
-                }
+                sortedTasksToTime.add(task);
             }
-
-
         }
         if (task.getTaskID() > countTasks) {
             countTasks = task.getTaskID();
