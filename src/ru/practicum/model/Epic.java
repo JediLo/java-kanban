@@ -1,24 +1,27 @@
 package ru.practicum.model;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
 
 public class Epic extends Task {
     private List<Integer> subTasksID = new ArrayList<>();
-
-    public Epic(String name, String description) {
-        super(name, description);
-
-    }
+    private LocalDateTime endTime;
 
     public Epic(Epic epic) {
         super(epic);
         this.subTasksID = epic.getSubTasksID();
+        this.endTime = epic.endTime;
     }
 
-    public Epic(int id, TaskType taskType, String name, TaskProgress taskProgress, String description) {
-        super(id, taskType, name, taskProgress, description);
+    public Epic(int id, TaskType taskType, String name, TaskProgress taskProgress,
+                String description) {
+        super(id, taskType, name, taskProgress, description,
+                // Передаются null т.к. поля рассчитываются исходя из подзадач
+                null, null);
     }
 
     public List<Integer> getSubTasksID() {
@@ -33,6 +36,15 @@ public class Epic extends Task {
 
     }
 
+    public void updateTimesEpic(LocalDateTime startTime, Duration duration, LocalDateTime endTime) {
+        if (startTime != null && endTime != null) {
+            this.startTime = startTime.truncatedTo(ChronoUnit.MINUTES);
+            this.endTime = endTime.truncatedTo(ChronoUnit.MINUTES);
+        }
+        this.duration = duration;
+
+    }
+
     public void removeSubTask(SubTask subTask) {
         if (subTask == null) {
             return;
@@ -41,9 +53,16 @@ public class Epic extends Task {
     }
 
     public void removeAllSubTasks() {
+        this.startTime = null;
+        this.duration = null;
+        this.endTime = null;
         subTasksID.clear();
     }
 
+    @Override
+    public LocalDateTime getEndTime() {
+        return endTime;
+    }
 
     @Override
     public String toString() {

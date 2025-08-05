@@ -38,9 +38,9 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     private static class TasksLinkedList<T> {
+        final HashMap<Integer, Node<T>> nodeMap = new HashMap<>();
         Node<T> first;
         Node<T> last;
-        final HashMap<Integer, Node<T>> nodeMap = new HashMap<>();
 
         void add(int id, T task) {
             Node<T> oldNode = nodeMap.get(id);

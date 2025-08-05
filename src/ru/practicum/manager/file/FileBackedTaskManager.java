@@ -7,7 +7,10 @@ import ru.practicum.model.Epic;
 import ru.practicum.model.SubTask;
 import ru.practicum.model.Task;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -38,7 +41,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         return manager;
     }
 
-    private void saveToSCV(String toSCV, File file) {
+    protected void saveToSCV(String toSCV, File file) {
         try {
             Files.writeString(Path.of(file.getPath()), toSCV);
         } catch (IOException e) {
@@ -132,7 +135,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         save();
     }
 
-    private void loadTaskFromString(Task task) {
+    protected void loadTaskFromString(Task task) {
         switch (task) {
             case null -> {
                 return;
@@ -144,9 +147,15 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 }
                 epic.addSubTask(subtaskToMap);
                 subTasks.put(subtaskToMap.getTaskID(), subtaskToMap);
+                checkAndReplaceEpicTaskTime(epic);
+                sortedTasksToTime.add(subtaskToMap);
+
             }
             case Epic epicToMap -> epics.put(epicToMap.getTaskID(), epicToMap);
-            default -> tasks.put(task.getTaskID(), task);
+            default -> {
+                tasks.put(task.getTaskID(), task);
+                sortedTasksToTime.add(task);
+            }
         }
         if (task.getTaskID() > countTasks) {
             countTasks = task.getTaskID();

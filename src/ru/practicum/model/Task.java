@@ -1,27 +1,31 @@
 package ru.practicum.model;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
 public class Task {
-    protected String name;
-    protected String description;
     protected int taskID;
-    protected TaskProgress taskProgress;
     protected TaskType taskType;
+    protected String name;
+    protected TaskProgress taskProgress;
+    protected String description;
+    protected LocalDateTime startTime;
+    protected Duration duration;
 
-    public Task(String name, String description) {
-        this.name = name;
-        this.description = description;
-
-    }
-
-    public Task(int id, TaskType taskType, String name, TaskProgress taskProgress, String description) {
-        this.taskID = id;
+    public Task(int taskID, TaskType taskType, String name, TaskProgress taskProgress, String description, LocalDateTime startTime, Duration duration) {
+        this.taskID = taskID;
         this.taskType = taskType;
         this.name = name;
         this.taskProgress = taskProgress;
         this.description = description;
+        if (startTime != null) {
+            this.startTime = startTime.truncatedTo(ChronoUnit.MINUTES);
+        }
+        this.duration = duration;
     }
+
 
     public Task(Task task) {
         if (task == null) {
@@ -32,14 +36,10 @@ public class Task {
         this.taskID = task.taskID;
         this.taskProgress = task.taskProgress;
         this.taskType = task.taskType;
-    }
-
-    public void setTaskID(int taskID) {
-        this.taskID = taskID;
-    }
-
-    public void setTaskProgress(TaskProgress taskProgress) {
-        this.taskProgress = taskProgress;
+        this.duration = task.duration;
+        if (task.startTime != null) {
+            this.startTime = task.startTime.truncatedTo(ChronoUnit.MINUTES);
+        }
     }
 
     @Override
@@ -58,6 +58,22 @@ public class Task {
         return taskID;
     }
 
+    public void setTaskID(int taskID) {
+        this.taskID = taskID;
+    }
+
+    public LocalDateTime getEndTime() {
+        return startTime.plus(duration);
+    }
+
+    public Duration getDuration() {
+        return duration;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
     @Override
     public String toString() {
         return "Task{" +
@@ -66,6 +82,9 @@ public class Task {
                 ", taskID=" + taskID +
                 ", taskProgress=" + taskProgress +
                 ", taskType=" + taskType +
+                ", duration=" + duration +
+                ", startTime=" + startTime +
+                ", endTime=" + getEndTime() +
                 '}';
     }
 
@@ -73,16 +92,20 @@ public class Task {
         return taskProgress;
     }
 
+    public void setTaskProgress(TaskProgress taskProgress) {
+        this.taskProgress = taskProgress;
+    }
+
     public String getName() {
         return name;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
     public void setDescription(String description) {

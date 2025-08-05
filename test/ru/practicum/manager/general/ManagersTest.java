@@ -3,8 +3,8 @@ package ru.practicum.manager.general;
 import org.junit.jupiter.api.Test;
 import ru.practicum.manager.history.HistoryManager;
 
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 
 class ManagersTest {
     @Test
