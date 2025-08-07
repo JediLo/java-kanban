@@ -21,7 +21,7 @@ public class Main {
 
     public static void main(String[] args) {
 
-        //addTasksToTest();
+        addTasksToTest();
         //printAllTask();
         //System.out.println();
         //addTasksToTest();

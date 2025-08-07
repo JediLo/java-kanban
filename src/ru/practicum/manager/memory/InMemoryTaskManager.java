@@ -1,5 +1,8 @@
 package ru.practicum.manager.memory;
 
+import ru.practicum.exceptons.HasOverLaps;
+import ru.practicum.exceptons.IncorrectTaskUpdate;
+import ru.practicum.exceptons.NotFoundTasks;
 import ru.practicum.manager.general.Managers;
 import ru.practicum.manager.general.TaskManager;
 import ru.practicum.manager.history.HistoryManager;
@@ -22,7 +25,7 @@ public class InMemoryTaskManager implements TaskManager {
     public Task getTask(int id) {
         Task task = tasks.get(id);
         if (task == null) {
-            return null;
+            throw new NotFoundTasks("Задачи с ID " + id + " не существует.");
         }
         history.add(task);
         return new Task(tasks.get(id));
@@ -32,7 +35,7 @@ public class InMemoryTaskManager implements TaskManager {
     public Epic getEpicTask(int id) {
         Epic epic = epics.get(id);
         if (epic == null) {
-            return null;
+            throw new NotFoundTasks("Эпика с ID " + id + " не существует.");
         }
         history.add(epic);
         return new Epic(epics.get(id));
@@ -42,7 +45,7 @@ public class InMemoryTaskManager implements TaskManager {
     public SubTask getSubTask(int id) {
         SubTask subTask = subTasks.get(id);
         if (subTask == null) {
-            return null;
+            throw new NotFoundTasks("Подзадачи с ID " + id + " не существует.");
         }
         history.add(subTask);
         return new SubTask(subTasks.get(id));
@@ -51,11 +54,11 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public int addNewTask(Task task) {
         if (task == null) {
-            return -1;
+            throw new IncorrectTaskUpdate("Невозможно добавить пустую задачу, проверьте запрос еще раз");
         }
         Task newTask = new Task(task);
         if (checkTheCrossingTimeTask(newTask)) {
-            return -1;
+            throw new HasOverLaps("Время выполнения задачи, пересекается с другой задачей");
         }
         countTasks++;
         newTask.setTaskID(countTasks);
@@ -69,7 +72,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public int addNewEpicTask(Epic epic) {
         if (epic == null) {
-            return -1;
+            throw new IncorrectTaskUpdate("Невозможно добавить пустой эпик, проверьте запрос еще раз");
         }
         Epic newEpic = new Epic(epic);
         countTasks++;
@@ -83,14 +86,14 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public int addNewSubTask(SubTask subTask) {
         if (subTask == null) {
-            return -1;
+            throw new IncorrectTaskUpdate("Невозможно добавить пустую подзадачу, проверьте запрос еще раз");
         }
         if (checkTheCrossingTimeTask(subTask)) {
-            return -1;
+            throw new HasOverLaps("Время выполнения подзадачи, пересекается с другой задачей");
         }
         Epic epic = epics.get(subTask.getEpicTaskID());
         if (epic == null) {
-            return -1;
+            throw new NotFoundTasks("Эпика с ID " + subTask.getEpicTaskID() + " не существует.");
         } else {
             SubTask newSubTask = new SubTask(subTask);
             countTasks++;
@@ -110,15 +113,16 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void updateTask(Task task) {
         if (task == null) {
-            return;
+            throw new IncorrectTaskUpdate("Некорректно составлен запрос на обновление задачи");
         }
         Task oldTask = tasks.get(task.getTaskID());
         if (oldTask == null) {
-            return;
+            throw new NotFoundTasks("Задачи с ID " + task.getTaskID() + " не существует.");
+
         }
         Task newTask = new Task(task);
         if (checkTheCrossingTimeTask(newTask)) {
-            return;
+            throw new HasOverLaps("Время выполнения задачи, пересекается с другой задачей");
         }
         tasks.put(newTask.getTaskID(), newTask);
         sortedTasksToTime.remove(oldTask);
@@ -128,30 +132,34 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void updateEpic(Epic epic) {
         if (epic == null) {
-            return;
+            throw new IncorrectTaskUpdate("Некорректно составлен запрос на обновление эпика'");
         }
-        if (epics.get(epic.getTaskID()) != null) {
-            epic.setName(epic.getName());
-            epic.setDescription(epic.getDescription());
+        Epic oldEpic = epics.get(epic.getTaskID());
+        if (oldEpic == null) {
+            throw new NotFoundTasks("Эпика с ID " + epic.getTaskID() + " не существует.");
         }
+
+        oldEpic.setName(epic.getName());
+        oldEpic.setDescription(epic.getDescription());
+
     }
 
     @Override
     public void updateSubtask(SubTask subTask) {
         if (subTask == null) {
-            return;
+            throw new IncorrectTaskUpdate("Некорректно составлен запрос на обновление подзадачи'");
         }
         Epic epic = epics.get(subTask.getEpicTaskID());
         if (epic == null) {
-            return;
+            throw new NotFoundTasks("Эпика с ID " + subTask.getEpicTaskID() + " не существует.");
         }
         SubTask oldSubTask = subTasks.get(subTask.getTaskID());
         if (oldSubTask == null) {
-            return;
+            throw new NotFoundTasks("Подзадачи с ID " + subTask.getTaskID() + " не существует.");
         }
         SubTask newSubTask = new SubTask(subTask);
         if (checkTheCrossingTimeTask(newSubTask)) {
-            return;
+            throw new HasOverLaps("Время выполнения подзадачи, пересекается с другой задачей");
         }
         subTasks.put(newSubTask.getTaskID(), newSubTask);
         sortedTasksToTime.remove(oldSubTask);

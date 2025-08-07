@@ -25,6 +25,14 @@ public class Task {
         }
         this.duration = duration;
     }
+    public Task(String name, String description, LocalDateTime startTime, Duration duration) {
+        this.name = name;
+        this.description = description;
+        if (startTime != null) {
+            this.startTime = startTime.truncatedTo(ChronoUnit.MINUTES);
+        }
+        this.duration = duration;
+    }
 
 
     public Task(Task task) {
