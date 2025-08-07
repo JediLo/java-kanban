@@ -46,9 +46,9 @@ public class EpicHttpHandler extends BaseHttpHandler implements HttpHandler {
                     }
                 }
             } else if (path.length == 3) {
-                Optional<Integer> IDOptional = getIDTask(exchange);
-                if (IDOptional.isPresent()) {
-                    int id = IDOptional.get();
+                Optional<Integer> optionalID = getIDTask(exchange);
+                if (optionalID.isPresent()) {
+                    int id = optionalID.get();
                     switch (endpoint) {
                         case GET_TASK -> {
                             sendSuccess(exchange, gson.toJson(manager.getEpicTask(id)));
