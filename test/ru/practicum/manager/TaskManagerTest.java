@@ -3,6 +3,7 @@ package ru.practicum.manager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import ru.practicum.exceptons.HasOverLaps;
 import ru.practicum.manager.general.TaskManager;
 import ru.practicum.model.*;
 
@@ -73,8 +74,9 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         manager.addNewTask(task);
         // Удаляем из менеджера
         manager.deleteTask(task.getTaskID());
-        // Наш менеджер должен возвращать null, когда не может вернуть задачу
-        Assertions.assertNull(manager.getTask(task.getTaskID()));
+        // Наш менеджер после удаления не должен иметь задач
+        List<Task> tasksFromManager = manager.getAllTask();
+        assertEquals(0, tasksFromManager.size());
     }
 
     @Test
@@ -207,25 +209,26 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
         // Обновляем в менеджере нашу задачу
         manager.updateEpic(updateEpic);
+
         //
-        updateEpic.updateTimesEpic(now, oneMinutes.plus(oneMinutes), now.plus(oneMinutes.plus(oneMinutes)));
-        updateEpic.addSubTask(firstSubTask);
-        updateEpic.addSubTask(secondSubTask);
+        epic.updateTimesEpic(now, oneMinutes.plus(oneMinutes), now.plus(oneMinutes.plus(oneMinutes)));
+        epic.addSubTask(firstSubTask);
+        epic.addSubTask(secondSubTask);
         // Получаем из менеджера обновленную задачу
         Epic savedEpic = manager.getEpicTask(updateEpic.getTaskID());
 
         // сравниваем что ID созданной и обновленной задачи одинаковые
-        Assertions.assertEquals(updateEpic.getTaskID(), savedEpic.getTaskID());
+        Assertions.assertEquals(epic.getTaskID(), savedEpic.getTaskID());
         // Сравниваем все поля созданной обновленной задачи и той которая у нас получена из менеджера после обновления
-        Assertions.assertEquals(updateEpic.getTaskID(), savedEpic.getTaskID());
-        Assertions.assertEquals(updateEpic.getType(), savedEpic.getType());
-        Assertions.assertNotEquals(updateEpic.getName(), savedEpic.getName());
+        Assertions.assertEquals(epic.getTaskID(), savedEpic.getTaskID());
+        Assertions.assertEquals(epic.getType(), savedEpic.getType());
+        Assertions.assertNotEquals(epic.getName(), savedEpic.getName());
         Assertions.assertEquals(updateEpic.getTaskProgress(), savedEpic.getTaskProgress());
-        Assertions.assertNotEquals(updateEpic.getDescription(), savedEpic.getDescription());
-        Assertions.assertEquals(updateEpic.getStartTime(), savedEpic.getStartTime());
-        Assertions.assertEquals(updateEpic.getDuration(), savedEpic.getDuration());
-        Assertions.assertEquals(updateEpic.getEndTime(), savedEpic.getEndTime());
-        Assertions.assertEquals(updateEpic.getSubTasksID(), savedEpic.getSubTasksID());
+        Assertions.assertNotEquals(epic.getDescription(), savedEpic.getDescription());
+        Assertions.assertEquals(epic.getStartTime(), savedEpic.getStartTime());
+        Assertions.assertEquals(epic.getDuration(), savedEpic.getDuration());
+        Assertions.assertEquals(epic.getEndTime(), savedEpic.getEndTime());
+        Assertions.assertEquals(epic.getSubTasksID(), savedEpic.getSubTasksID());
 
     }
 
@@ -238,8 +241,8 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         manager.addNewEpicTask(epic);
         // Удаляем из менеджера
         manager.deleteEpicTask(epic.getTaskID());
-        // Наш менеджер должен возвращать null, когда не может вернуть задачу
-        Assertions.assertNull(manager.getEpicTask(epic.getTaskID()));
+        // в менеджере не должно остаться эпиков
+        Assertions.assertEquals(0, manager.getAllEpic().size());
     }
 
     @Test
@@ -506,12 +509,13 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         SubTask overlappingSubtask = new SubTask(4, TaskType.SUBTASK, "Name SubTask"
                 , TaskProgress.NEW, "Des Subtask"
                 , epic.getTaskID(), now, oneMinutes);
-        int idOverlappingTask = manager.addNewTask(overlappingTask);
+        // При добавлении пересекающейся задачи ожидаем ошибку HasOverLaps
+        Assertions.assertThrows(HasOverLaps.class,() ->manager.addNewTask(overlappingTask));
         manager.addNewEpicTask(epic);
-        int idOverlappingSubTask = manager.addNewSubTask(overlappingSubtask);
+        // При добавлении пересекающейся задачи ожидаем ошибку HasOverLaps
+        Assertions.assertThrows(HasOverLaps.class,() -> manager.addNewSubTask(overlappingSubtask));
 
-        assertEquals(-1, idOverlappingTask);
-        assertEquals(-1, idOverlappingSubTask);
+
     }
 
     @Test
@@ -531,12 +535,13 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         SubTask overlappingSubtask = new SubTask(4, TaskType.SUBTASK, "Name SubTask"
                 , TaskProgress.NEW, "Des Subtask"
                 , epic.getTaskID(), now, fiveMinutes);
-        int idOverlappingTask = manager.addNewTask(overlappingTask);
+        // При добавлении пересекающейся задачи ожидаем ошибку HasOverLaps
+        Assertions.assertThrows(HasOverLaps.class,() ->manager.addNewTask(overlappingTask));
         manager.addNewEpicTask(epic);
-        int idOverlappingSubTask = manager.addNewSubTask(overlappingSubtask);
+        // При добавлении пересекающейся задачи ожидаем ошибку HasOverLaps
+        Assertions.assertThrows(HasOverLaps.class,() ->manager.addNewSubTask(overlappingSubtask));
 
-        assertEquals(-1, idOverlappingTask);
-        assertEquals(-1, idOverlappingSubTask);
+
     }
 
     @Test
@@ -556,12 +561,12 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         SubTask overlappingSubtask = new SubTask(4, TaskType.SUBTASK, "Name SubTask"
                 , TaskProgress.NEW, "Des Subtask"
                 , epic.getTaskID(), nowPlusOneMinutes, fourMinutes);
-        int idOverlappingTask = manager.addNewTask(overlappingTask);
+        // При добавлении пересекающейся задачи ожидаем ошибку HasOverLaps
+        Assertions.assertThrows(HasOverLaps.class,() ->manager.addNewTask(overlappingTask));
         manager.addNewEpicTask(epic);
-        int idOverlappingSubTask = manager.addNewSubTask(overlappingSubtask);
+        // При добавлении пересекающейся задачи ожидаем ошибку HasOverLaps
+        Assertions.assertThrows(HasOverLaps.class,() ->manager.addNewSubTask(overlappingSubtask));
 
-        assertEquals(-1, idOverlappingTask);
-        assertEquals(-1, idOverlappingSubTask);
     }
 
     @Test
@@ -581,12 +586,12 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         SubTask overlappingSubtask = new SubTask(4, TaskType.SUBTASK, "Name SubTask"
                 , TaskProgress.NEW, "Des Subtask"
                 , epic.getTaskID(), nowPlusOneMinutes, tenMinutes);
-        int idOverlappingTask = manager.addNewTask(overlappingTask);
+        // При добавлении пересекающейся задачи ожидаем ошибку HasOverLaps
+        Assertions.assertThrows(HasOverLaps.class,() -> manager.addNewTask(overlappingTask));
         manager.addNewEpicTask(epic);
-        int idOverlappingSubTask = manager.addNewSubTask(overlappingSubtask);
+        // При добавлении пересекающейся задачи ожидаем ошибку HasOverLaps
+        Assertions.assertThrows(HasOverLaps.class,() ->manager.addNewSubTask(overlappingSubtask));
 
-        assertEquals(-1, idOverlappingTask);
-        assertEquals(-1, idOverlappingSubTask);
     }
 
     @Test
@@ -606,12 +611,12 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         SubTask overlappingSubtask = new SubTask(4, TaskType.SUBTASK, "Name SubTask"
                 , TaskProgress.NEW, "Des Subtask"
                 , epic.getTaskID(), nowPlusOneMinutes, oneMinutes);
-        int idOverlappingTask = manager.addNewTask(overlappingTask);
+        // При добавлении пересекающейся задачи ожидаем ошибку HasOverLaps
+        Assertions.assertThrows(HasOverLaps.class, () ->manager.addNewTask(overlappingTask));
         manager.addNewEpicTask(epic);
-        int idOverlappingSubTask = manager.addNewSubTask(overlappingSubtask);
+        // При добавлении пересекающейся задачи ожидаем ошибку HasOverLaps
+        Assertions.assertThrows(HasOverLaps.class, () ->manager.addNewSubTask(overlappingSubtask));
 
-        assertEquals(-1, idOverlappingTask);
-        assertEquals(-1, idOverlappingSubTask);
     }
 
     @Test
