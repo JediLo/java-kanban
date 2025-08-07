@@ -14,15 +14,13 @@ import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
 public abstract class BaseHttpHandler implements HttpHandler {
+    protected static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
     private static final int CODE_SUCCESS = 200;
     private static final int CODE_INCORRECT_DATA = 400;
     private static final int CODE_NOT_FOUND = 404;
     private static final int CODE_OVER_LAPS = 406;
     private static final int CODE_INTERNAL_SERVER_ERROR = 500;
-
-
-    protected static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
-    protected TaskManager manager;
+    protected final TaskManager manager;
     protected final Gson gson;
 
 

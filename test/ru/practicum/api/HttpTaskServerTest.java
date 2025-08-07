@@ -24,9 +24,9 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class HttpTaskServerTest {
-    TaskManager manager = new InMemoryTaskManager();
-    HttpTaskServer httpTaskServer = new HttpTaskServer(manager);
-    Gson gson = httpTaskServer.getGson();
+    final TaskManager manager = new InMemoryTaskManager();
+    final HttpTaskServer httpTaskServer = new HttpTaskServer(manager);
+    final Gson gson = httpTaskServer.getGson();
 
     HttpTaskServerTest() throws IOException {
     }
@@ -176,7 +176,7 @@ class HttpTaskServerTest {
         // Создаем задачу
         Task task = new Task("Name Task", "Description Task", now, oneMinutes);
         // добавляем задачу в менеджер
-        int taskID = manager.addNewTask(task);
+        manager.addNewTask(task);
         // Конвертируем в Json
         String taskJson = gson.toJson(task);
         // создаём HTTP-клиент и запрос

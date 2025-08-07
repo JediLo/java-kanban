@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-
 import ru.practicum.exceptons.HasOverLaps;
 import ru.practicum.exceptons.IncorrectTaskUpdate;
 import ru.practicum.exceptons.NotFoundTasks;
@@ -17,7 +16,7 @@ import java.util.Optional;
 public class TaskHttpHandler extends BaseHttpHandler implements HttpHandler {
 
     public TaskHttpHandler(TaskManager taskManager, Gson gson) {
-        super(taskManager,gson);
+        super(taskManager, gson);
     }
 
     @Override

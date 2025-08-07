@@ -11,7 +11,6 @@ import ru.practicum.manager.general.TaskManager;
 import ru.practicum.model.Endpoint;
 import ru.practicum.model.Epic;
 
-import java.io.IOException;
 import java.util.Optional;
 
 public class EpicHttpHandler extends BaseHttpHandler implements HttpHandler {
@@ -20,7 +19,7 @@ public class EpicHttpHandler extends BaseHttpHandler implements HttpHandler {
     }
 
     @Override
-    public void handle(HttpExchange exchange) throws IOException {
+    public void handle(HttpExchange exchange) {
         // Получаем endpoint
         Endpoint endpoint = getEndpoint(exchange);
         // Получаем запрос
@@ -56,7 +55,6 @@ public class EpicHttpHandler extends BaseHttpHandler implements HttpHandler {
                             return;
                         }
                         case POST_TASK -> {
-                           ;
                             Epic epic = gson.fromJson(request, Epic.class);
                             epic.setTaskID(id);
                             manager.updateEpic(epic);

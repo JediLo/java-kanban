@@ -18,9 +18,9 @@ import java.util.List;
 
 
 class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
-    LocalDateTime timeToFirstTask = LocalDateTime.now();
-    LocalDateTime timeToSecondTask = timeToFirstTask.plusMinutes(2);
-    Duration duration = Duration.ofMinutes(1);
+    final LocalDateTime timeToFirstTask = LocalDateTime.now();
+    final LocalDateTime timeToSecondTask = timeToFirstTask.plusMinutes(2);
+    final Duration duration = Duration.ofMinutes(1);
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm_dd_MM_yyyy");
 
     @Test

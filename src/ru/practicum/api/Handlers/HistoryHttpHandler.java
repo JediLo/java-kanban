@@ -16,10 +16,10 @@ public class HistoryHttpHandler extends BaseHttpHandler implements HttpHandler {
     }
 
     @Override
-    public void handle(HttpExchange exchange)  {
+    public void handle(HttpExchange exchange) {
         String[] path = getPath(exchange);
         // Проверяем запрос и если он не корректный отправляем сообщение об этом
-        if (path.length != 2 ||!exchange.getRequestMethod().equals("GET")) {
+        if (path.length != 2 || !exchange.getRequestMethod().equals("GET")) {
             sendNotFound(exchange, "Такой команды не существует");
             return;
         }

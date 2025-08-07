@@ -20,7 +20,7 @@ public class Epic extends Task {
     public Epic(String name, String description) {
         super(name, description,
                 // Передаются null т.к. поля рассчитываются исходя из подзадач
-                null,null);
+                null, null);
     }
 
     public Epic(int id, TaskType taskType, String name, TaskProgress taskProgress,

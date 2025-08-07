@@ -11,12 +11,11 @@ import ru.practicum.manager.general.TaskManager;
 import ru.practicum.model.Endpoint;
 import ru.practicum.model.SubTask;
 
-import java.util.GregorianCalendar;
 import java.util.Optional;
 
 public class SubTaskHttpHandler extends BaseHttpHandler implements HttpHandler {
     public SubTaskHttpHandler(TaskManager taskManager, Gson gson) {
-        super(taskManager,gson);
+        super(taskManager, gson);
     }
 
     @Override
@@ -46,7 +45,7 @@ public class SubTaskHttpHandler extends BaseHttpHandler implements HttpHandler {
                         return;
                     }
                 }
-            }else if (path.length == 3) {
+            } else if (path.length == 3) {
                 Optional<Integer> IDOptional = getIDTask(exchange);
                 if (IDOptional.isPresent()) {
                     int id = IDOptional.get();
