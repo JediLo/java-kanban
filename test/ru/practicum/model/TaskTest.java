@@ -8,9 +8,9 @@ import java.time.LocalDateTime;
 import static org.junit.jupiter.api.Assertions.*;
 
 class TaskTest {
-    LocalDateTime timeToFirstTask = LocalDateTime.now();
-    LocalDateTime timeToSecondTask = timeToFirstTask.plusMinutes(2);
-    Duration duration = Duration.ofMinutes(1);
+    final LocalDateTime timeToFirstTask = LocalDateTime.now();
+    final LocalDateTime timeToSecondTask = timeToFirstTask.plusMinutes(2);
+    final Duration duration = Duration.ofMinutes(1);
     @Test
     void shouldBeTrueWhenTaskIdMatches() {
         Task taskFirst = new Task(1, TaskType.TASK,"First Task"
