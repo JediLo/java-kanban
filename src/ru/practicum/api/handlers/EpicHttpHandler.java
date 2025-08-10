@@ -12,7 +12,6 @@ import ru.practicum.manager.general.TaskManager;
 import ru.practicum.model.Endpoint;
 import ru.practicum.model.Epic;
 import ru.practicum.model.SubTask;
-import ru.practicum.model.Task;
 
 import java.util.List;
 import java.util.Optional;
@@ -71,9 +70,9 @@ public class EpicHttpHandler extends BaseHttpHandler implements HttpHandler {
                 Optional<Integer> optionalID = getIDTask(exchange);
                 if (optionalID.isPresent()) {
                     int id = optionalID.get();
-                    if (endpoint == Endpoint.GET_TASK && path[3].equals("subtasks")){
+                    if (endpoint == Endpoint.GET_TASK && path[3].equals("subtasks")) {
                         List<SubTask> subTaskList = manager.getSubTasksFromEpic(id);
-                        sendSuccess(exchange ,gson.toJson(subTaskList, new TypeToken<List<SubTask>>() {
+                        sendSuccess(exchange, gson.toJson(subTaskList, new TypeToken<List<SubTask>>() {
                         }.getType()));
                     }
                 }

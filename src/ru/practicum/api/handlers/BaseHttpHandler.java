@@ -93,8 +93,9 @@ public abstract class BaseHttpHandler implements HttpHandler {
             default -> Endpoint.UNKNOWN;
         };
     }
-    protected void validateNotBlankRequest(String request){
-        if(request == null || request.isBlank()){
+
+    protected void validateNotBlankRequest(String request) {
+        if (request == null || request.isBlank()) {
             throw new IncorrectTaskUpdate("Тело запроса пустое, пожалуйста проверьте запрос.");
         }
     }
