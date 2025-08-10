@@ -1,7 +1,8 @@
-package ru.practicum.api.Handlers;
+package ru.practicum.api.handlers;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import ru.practicum.exceptons.HasOverLaps;
@@ -9,12 +10,15 @@ import ru.practicum.exceptons.IncorrectTaskUpdate;
 import ru.practicum.exceptons.NotFoundTasks;
 import ru.practicum.manager.general.TaskManager;
 import ru.practicum.model.Endpoint;
+import ru.practicum.model.Epic;
 import ru.practicum.model.SubTask;
+import ru.practicum.model.Task;
 
+import java.util.List;
 import java.util.Optional;
 
-public class SubTaskHttpHandler extends BaseHttpHandler implements HttpHandler {
-    public SubTaskHttpHandler(TaskManager taskManager, Gson gson) {
+public class EpicHttpHandler extends BaseHttpHandler implements HttpHandler {
+    public EpicHttpHandler(TaskManager taskManager, Gson gson) {
         super(taskManager, gson);
     }
 
@@ -30,17 +34,18 @@ public class SubTaskHttpHandler extends BaseHttpHandler implements HttpHandler {
             if (path.length == 2) {
                 switch (endpoint) {
                     case GET_TASK -> {
-                        sendSuccess(exchange, gson.toJson(manager.getAllSubTask()));
+                        sendSuccess(exchange, gson.toJson(manager.getAllEpic()));
                         return;
                     }
                     case POST_TASK -> {
-                        SubTask subTask = gson.fromJson(request, SubTask.class);
-                        manager.addNewSubTask(subTask);
+                        validateNotBlankRequest(request);
+                        Epic epic = gson.fromJson(request, Epic.class);
+                        manager.addNewEpicTask(epic);
                         sendSuccessWhitOutBody(exchange);
                         return;
                     }
                     case DELETE_TASK -> {
-                        manager.deleteSubTasks();
+                        manager.deleteEpicTasks();
                         sendSuccessWhitOutBody(exchange);
                         return;
                     }
@@ -49,25 +54,27 @@ public class SubTaskHttpHandler extends BaseHttpHandler implements HttpHandler {
                 Optional<Integer> optionalID = getIDTask(exchange);
                 if (optionalID.isPresent()) {
                     int id = optionalID.get();
-
                     switch (endpoint) {
                         case GET_TASK -> {
-                            sendSuccess(exchange, gson.toJson(manager.getSubTask(id)));
-                            return;
-                        }
-                        case POST_TASK -> {
-                            SubTask subTask = gson.fromJson(request, SubTask.class);
-                            subTask.setTaskID(id);
-                            manager.updateSubtask(subTask);
-                            sendSuccessWhitOutBody(exchange);
+                            sendSuccess(exchange, gson.toJson(manager.getEpicTask(id)));
                             return;
                         }
                         case DELETE_TASK -> {
-                            manager.deleteSubtask(id);
+                            manager.deleteEpicTask(id);
                             sendSuccessWhitOutBody(exchange);
                             return;
                         }
 
+                    }
+                }
+            } else if (path.length == 4) {
+                Optional<Integer> optionalID = getIDTask(exchange);
+                if (optionalID.isPresent()) {
+                    int id = optionalID.get();
+                    if (endpoint == Endpoint.GET_TASK && path[3].equals("subtasks")){
+                        List<SubTask> subTaskList = manager.getSubTasksFromEpic(id);
+                        sendSuccess(exchange ,gson.toJson(subTaskList, new TypeToken<List<SubTask>>() {
+                        }.getType()));
                     }
                 }
             }
@@ -83,7 +90,6 @@ public class SubTaskHttpHandler extends BaseHttpHandler implements HttpHandler {
         } catch (JsonSyntaxException e) {
             sendIncorrectData(exchange, "Ошибка синтаксиса JSON");
         } catch (Exception e) {
-            e.printStackTrace();
             sendInternalServerError(exchange);
         }
     }

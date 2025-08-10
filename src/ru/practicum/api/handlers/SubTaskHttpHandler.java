@@ -1,4 +1,4 @@
-package ru.practicum.api.Handlers;
+package ru.practicum.api.handlers;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
@@ -9,19 +9,17 @@ import ru.practicum.exceptons.IncorrectTaskUpdate;
 import ru.practicum.exceptons.NotFoundTasks;
 import ru.practicum.manager.general.TaskManager;
 import ru.practicum.model.Endpoint;
-import ru.practicum.model.Task;
+import ru.practicum.model.SubTask;
 
 import java.util.Optional;
 
-public class TaskHttpHandler extends BaseHttpHandler implements HttpHandler {
-
-    public TaskHttpHandler(TaskManager taskManager, Gson gson) {
+public class SubTaskHttpHandler extends BaseHttpHandler implements HttpHandler {
+    public SubTaskHttpHandler(TaskManager taskManager, Gson gson) {
         super(taskManager, gson);
     }
 
     @Override
     public void handle(HttpExchange exchange) {
-
         // Получаем endpoint
         Endpoint endpoint = getEndpoint(exchange);
         // Получаем запрос
@@ -32,17 +30,18 @@ public class TaskHttpHandler extends BaseHttpHandler implements HttpHandler {
             if (path.length == 2) {
                 switch (endpoint) {
                     case GET_TASK -> {
-                        sendSuccess(exchange, gson.toJson(manager.getAllTask()));
+                        sendSuccess(exchange, gson.toJson(manager.getAllSubTask()));
                         return;
                     }
                     case POST_TASK -> {
-                        Task task = gson.fromJson(request, Task.class);
-                        manager.addNewTask(task);
+                        validateNotBlankRequest(request);
+                        SubTask subTask = gson.fromJson(request, SubTask.class);
+                        manager.addNewSubTask(subTask);
                         sendSuccessWhitOutBody(exchange);
                         return;
                     }
                     case DELETE_TASK -> {
-                        manager.deleteTasks();
+                        manager.deleteSubTasks();
                         sendSuccessWhitOutBody(exchange);
                         return;
                     }
@@ -51,22 +50,22 @@ public class TaskHttpHandler extends BaseHttpHandler implements HttpHandler {
                 Optional<Integer> optionalID = getIDTask(exchange);
                 if (optionalID.isPresent()) {
                     int id = optionalID.get();
+
                     switch (endpoint) {
                         case GET_TASK -> {
-                            sendSuccess(exchange, gson.toJson(manager.getTask(id)));
+                            sendSuccess(exchange, gson.toJson(manager.getSubTask(id)));
                             return;
                         }
-
-
                         case POST_TASK -> {
-                            Task task = gson.fromJson(request, Task.class);
-                            task.setTaskID(id);
-                            manager.updateTask(task);
+                            validateNotBlankRequest(request);
+                            SubTask subTask = gson.fromJson(request, SubTask.class);
+                            subTask.setTaskID(id);
+                            manager.updateSubtask(subTask);
                             sendSuccessWhitOutBody(exchange);
                             return;
                         }
                         case DELETE_TASK -> {
-                            manager.deleteTask(id);
+                            manager.deleteSubtask(id);
                             sendSuccessWhitOutBody(exchange);
                             return;
                         }
@@ -86,9 +85,7 @@ public class TaskHttpHandler extends BaseHttpHandler implements HttpHandler {
         } catch (JsonSyntaxException e) {
             sendIncorrectData(exchange, "Ошибка синтаксиса JSON");
         } catch (Exception e) {
-            e.printStackTrace();
             sendInternalServerError(exchange);
         }
-
     }
 }

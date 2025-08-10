@@ -1,4 +1,4 @@
-package ru.practicum.api.Handlers;
+package ru.practicum.api.handlers;
 
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;

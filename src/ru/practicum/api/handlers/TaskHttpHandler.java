@@ -1,4 +1,4 @@
-package ru.practicum.api.Handlers;
+package ru.practicum.api.handlers;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
@@ -9,17 +9,19 @@ import ru.practicum.exceptons.IncorrectTaskUpdate;
 import ru.practicum.exceptons.NotFoundTasks;
 import ru.practicum.manager.general.TaskManager;
 import ru.practicum.model.Endpoint;
-import ru.practicum.model.Epic;
+import ru.practicum.model.Task;
 
 import java.util.Optional;
 
-public class EpicHttpHandler extends BaseHttpHandler implements HttpHandler {
-    public EpicHttpHandler(TaskManager taskManager, Gson gson) {
+public class TaskHttpHandler extends BaseHttpHandler implements HttpHandler {
+
+    public TaskHttpHandler(TaskManager taskManager, Gson gson) {
         super(taskManager, gson);
     }
 
     @Override
     public void handle(HttpExchange exchange) {
+
         // Получаем endpoint
         Endpoint endpoint = getEndpoint(exchange);
         // Получаем запрос
@@ -30,17 +32,18 @@ public class EpicHttpHandler extends BaseHttpHandler implements HttpHandler {
             if (path.length == 2) {
                 switch (endpoint) {
                     case GET_TASK -> {
-                        sendSuccess(exchange, gson.toJson(manager.getAllEpic()));
+                        sendSuccess(exchange, gson.toJson(manager.getAllTask()));
                         return;
                     }
                     case POST_TASK -> {
-                        Epic epic = gson.fromJson(request, Epic.class);
-                        manager.addNewEpicTask(epic);
+                        validateNotBlankRequest(request);
+                        Task task = gson.fromJson(request, Task.class);
+                        manager.addNewTask(task);
                         sendSuccessWhitOutBody(exchange);
                         return;
                     }
                     case DELETE_TASK -> {
-                        manager.deleteEpicTasks();
+                        manager.deleteTasks();
                         sendSuccessWhitOutBody(exchange);
                         return;
                     }
@@ -51,18 +54,19 @@ public class EpicHttpHandler extends BaseHttpHandler implements HttpHandler {
                     int id = optionalID.get();
                     switch (endpoint) {
                         case GET_TASK -> {
-                            sendSuccess(exchange, gson.toJson(manager.getEpicTask(id)));
+                            sendSuccess(exchange, gson.toJson(manager.getTask(id)));
                             return;
                         }
                         case POST_TASK -> {
-                            Epic epic = gson.fromJson(request, Epic.class);
-                            epic.setTaskID(id);
-                            manager.updateEpic(epic);
+                            validateNotBlankRequest(request);
+                            Task task = gson.fromJson(request, Task.class);
+                            task.setTaskID(id);
+                            manager.updateTask(task);
                             sendSuccessWhitOutBody(exchange);
                             return;
                         }
                         case DELETE_TASK -> {
-                            manager.deleteEpicTask(id);
+                            manager.deleteTask(id);
                             sendSuccessWhitOutBody(exchange);
                             return;
                         }
@@ -82,8 +86,8 @@ public class EpicHttpHandler extends BaseHttpHandler implements HttpHandler {
         } catch (JsonSyntaxException e) {
             sendIncorrectData(exchange, "Ошибка синтаксиса JSON");
         } catch (Exception e) {
-            e.printStackTrace();
             sendInternalServerError(exchange);
         }
+
     }
 }

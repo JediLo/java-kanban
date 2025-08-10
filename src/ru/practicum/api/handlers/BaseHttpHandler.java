@@ -1,9 +1,10 @@
-package ru.practicum.api.Handlers;
+package ru.practicum.api.handlers;
 
 
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import ru.practicum.exceptons.IncorrectTaskUpdate;
 import ru.practicum.manager.general.TaskManager;
 import ru.practicum.model.Endpoint;
 
@@ -91,6 +92,11 @@ public abstract class BaseHttpHandler implements HttpHandler {
             case "DELETE" -> Endpoint.DELETE_TASK;
             default -> Endpoint.UNKNOWN;
         };
+    }
+    protected void validateNotBlankRequest(String request){
+        if(request == null || request.isBlank()){
+            throw new IncorrectTaskUpdate("Тело запроса пустое, пожалуйста проверьте запрос.");
+        }
     }
 
 

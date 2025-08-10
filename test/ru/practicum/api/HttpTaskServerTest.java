@@ -252,36 +252,6 @@ class HttpTaskServerTest {
     }
 
     @Test
-    void shouldUpdateEpic() throws IOException, InterruptedException {
-        // Создаем эпик
-        Epic epic = new Epic("Epic Name", "Epic Description");
-        // Добавляем эпик в наш менеджер
-        int epicID = manager.addNewEpicTask(epic);
-        // Создаем новый эпик с обновленными полями
-        Epic newEpic = new Epic("New Epic Name", "New Epic Description");
-        // Конвертируем в Json
-        String taskJson = gson.toJson(newEpic);
-
-        // создаём HTTP-клиент и запрос
-
-        HttpClient client = HttpClient.newHttpClient();
-        URI url = URI.create("http://localhost:8080/epics/" + epicID);
-        HttpRequest request = HttpRequest.newBuilder().uri(url).POST(HttpRequest.BodyPublishers.ofString(taskJson)).build();
-
-        // вызываем рест, отвечающий за создание задач
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        // проверяем код ответа
-        assertEquals(201, response.statusCode());
-
-        List<Epic> tasksFromManager = manager.getAllEpic();
-
-
-        assertEquals(1, tasksFromManager.size(), "Некорректное количество задач");
-        assertEquals("New Epic Name", tasksFromManager.getFirst().getName(), "Некорректное имя задачи");
-        assertEquals("New Epic Description", tasksFromManager.getFirst().getDescription(), "Некорректное имя задачи");
-    }
-
-    @Test
     void shouldUpdateSubTask() throws IOException, InterruptedException {
         LocalDateTime now = LocalDateTime.now();
         Duration oneMinutes = Duration.ofMinutes(1);
@@ -332,23 +302,6 @@ class HttpTaskServerTest {
         assertEquals(404, response.statusCode());
         assertEquals("Задачи с ID 1 не существует.", response.body());
 
-    }
-
-    @Test
-    void shouldReturnErrorWhenUpdateEpicAndEpicNotInManager() throws IOException, InterruptedException {
-        // Создаем эпик
-        Epic epic = new Epic("Epic Name", "Epic Description");
-        // Конвертируем в Json
-        String taskJson = gson.toJson(epic);
-        // создаём HTTP-клиент и запрос
-        HttpClient client = HttpClient.newHttpClient();
-        URI url = URI.create("http://localhost:8080/epics/1");
-        HttpRequest request = HttpRequest.newBuilder().uri(url).POST(HttpRequest.BodyPublishers.ofString(taskJson)).build();
-
-        // вызываем рест, отвечающий за создание задач
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        assertEquals(404, response.statusCode());
-        assertEquals("Эпика с ID 1 не существует.", response.body());
     }
 
     @Test
@@ -583,7 +536,6 @@ class HttpTaskServerTest {
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         // проверяем код ответа
         assertEquals(200, response.statusCode());
-        System.out.println(response.body());
         Epic taskFromResponse = gson.fromJson(response.body(), Epic.class);
         assertEquals("Name Epic2", taskFromResponse.getName(), "Некорректное имя задачи");
 
@@ -625,6 +577,44 @@ class HttpTaskServerTest {
         assertEquals("Name SubTask2", taskFromResponse.getName(), "Некорректное имя задачи");
 
 
+    }
+
+    @Test
+    void shouldReturnSubTasksFomEpic() throws IOException, InterruptedException {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime nowPlusOneMinutes = now.plusMinutes(1);
+        LocalDateTime nowPlusTwoMinutes = now.plusMinutes(2);
+        Duration oneMinutes = Duration.ofMinutes(1);
+        // Создаем эпик и  подзадачи и помещаем их в manager
+        Epic epic = new Epic("Name Epic", "Description Epic");
+        int epicID = manager.addNewEpicTask(epic);
+        SubTask subTask1 = new SubTask("Name SubTask1", "Description Task1",
+                now, oneMinutes, epicID);
+        SubTask subTask2 = new SubTask("Name SubTask2", "Description SubTask2",
+                nowPlusOneMinutes, oneMinutes, epicID);
+        SubTask subTask3 = new SubTask("Name SubTask3", "Description SubTask3",
+                nowPlusTwoMinutes, oneMinutes, epicID);
+        manager.addNewSubTask(subTask1);
+        manager.addNewSubTask(subTask2);
+        manager.addNewSubTask(subTask3);
+        // создаём HTTP-клиент и запрос
+        HttpClient client = HttpClient.newHttpClient();
+        URI url = URI.create("http://localhost:8080/epics/" + epicID + "/subtasks");
+        HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
+
+        // вызываем рест, отвечающий за создание задач
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        // проверяем код ответа
+
+        assertEquals(200, response.statusCode());
+
+        List<SubTask> taskFromResponse = gson.fromJson(response.body(), new TypeToken<List<SubTask>>() {
+        }.getType());
+
+        assertEquals(3, taskFromResponse.size());
+        assertEquals("Name SubTask1", taskFromResponse.getFirst().getName());
+        assertEquals("Name SubTask2", taskFromResponse.get(1).getName());
+        assertEquals("Name SubTask3", taskFromResponse.getLast().getName());
     }
 
 
@@ -785,5 +775,34 @@ class HttpTaskServerTest {
         assertEquals("Name SubTask1", tasksFromResponse.getLast().getName(), "Некорректное имя задачи");
 
 
+    }
+
+    // Запросы Post без тела
+    @Test
+    void shouldFailWhenPostingTaskWithoutBody() throws IOException, InterruptedException {
+        // создаём HTTP-клиент и запрос
+        HttpClient client = HttpClient.newHttpClient();
+        URI url = URI.create("http://localhost:8080/tasks/1");
+        HttpRequest request = HttpRequest.newBuilder().uri(url).POST(HttpRequest.BodyPublishers.noBody()).build();
+
+        // вызываем рест, отвечающий за создание задач
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        // проверяем код ответа
+        assertEquals(400, response.statusCode());
+        assertEquals("Тело запроса пустое, пожалуйста проверьте запрос.", response.body());
+    }
+
+    @Test
+    void shouldFailWhenPostingSubTaskWithoutBody() throws IOException, InterruptedException {
+        // создаём HTTP-клиент и запрос
+        HttpClient client = HttpClient.newHttpClient();
+        URI url = URI.create("http://localhost:8080/subtasks/1");
+        HttpRequest request = HttpRequest.newBuilder().uri(url).POST(HttpRequest.BodyPublishers.noBody()).build();
+
+        // вызываем рест, отвечающий за создание задач
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        // проверяем код ответа
+        assertEquals(400, response.statusCode());
+        assertEquals("Тело запроса пустое, пожалуйста проверьте запрос.", response.body());
     }
 }

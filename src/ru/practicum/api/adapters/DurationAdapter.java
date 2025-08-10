@@ -1,4 +1,4 @@
-package ru.practicum.api.Adapters;
+package ru.practicum.api.adapters;
 
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;

@@ -3,9 +3,9 @@ package ru.practicum.api.server;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.sun.net.httpserver.HttpServer;
-import ru.practicum.api.Adapters.DurationAdapter;
-import ru.practicum.api.Adapters.LocalDateTimeAdapter;
-import ru.practicum.api.Handlers.*;
+import ru.practicum.api.adapters.DurationAdapter;
+import ru.practicum.api.adapters.LocalDateTimeAdapter;
+import ru.practicum.api.handlers.*;
 import ru.practicum.manager.general.Managers;
 import ru.practicum.manager.general.TaskManager;
 
